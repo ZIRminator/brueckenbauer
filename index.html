@@ -1,0 +1,1813 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Brückenbauer plant deine Urlaubstage 2027 so, dass möglichst viele freie Tage am Stück entstehen, mit Feiertagen, Schulferien und Partnermodus.">
+<meta name="theme-color" content="#FFDB14">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23FFDB14'/%3E%3Crect x='12' y='14' width='40' height='10' rx='5' fill='%23FFFFFF'/%3E%3Crect x='12' y='27' width='40' height='10' rx='5' fill='%235E31FF'/%3E%3Crect x='12' y='40' width='40' height='10' rx='5' fill='%23E81C23'/%3E%3C/svg%3E">
+<title>Brückenbauer</title>
+<style>
+/* Schriften liegen im eigenen Ordner "fonts" (kein Abruf bei Google, besser für den Datenschutz).
+   Fehlen die Dateien, nimmt der Browser automatisch Ersatzschriften. */
+@font-face { font-family: "Bowlby One"; src: url("fonts/BowlbyOne-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Figtree"; src: url("fonts/Figtree-VariableFont_wght.ttf") format("truetype"); font-weight: 300 900; font-style: normal; font-display: swap; }
+body { margin: 0; }
+img { max-width: 100%; }
+</style>
+<style>
+/* Layout: Plakat-Pop. Ein knallgelbes Kopfband als einziger großer Farbmoment, darunter ruhige weiße Karten auf zartem Violett.
+   Volle Farbe nur für das, was zählt: Gelb = Urlaub und Ergebnis, Violett = Auswahl und Partner, Rot = Feiertage und Warnungen. */
+:root {
+  --bg: #F3F0FF;
+  --card: #FFFFFF;
+  --field: #F7F5FF;
+  --ink: #1A1446;
+  --muted: #625C8F;
+  --hair: #E2DCFF;
+  --yellow: #FFDB14;
+  --yellow-mid: #FFE866;
+  --yellow-soft: #FFF4B8;
+  --span-j: #FFF4B8;
+  --on-yellow: #1A1446;
+  --violet: #5E31FF;
+  --violet-hover: #4A1FEA;
+  --violet-mid: #B3A2FF;
+  --violet-half: #D3C9FF;
+  --violet-soft: #ECE7FF;
+  --violet-text: #5E31FF;
+  --on-violet: #FFFFFF;
+  --red: #E81C23;
+  --red-text: #D0141B;
+  --red-mid: #FF9FA2;
+  --red-soft: #FFE3E4;
+  --hatch: #BDB4E8;
+  --p1-line: #B89A00;
+  --p2-line: #5E31FF;
+  --brand-violet: #5E31FF;
+  --brand-red: #E81C23;
+  --f-display: "Bowlby One", "Arial Black", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Figtree", "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #110C2B; --card: #1B1442; --field: #241C55; --ink: #F4F1FF; --muted: #B3A9E6; --hair: #33296E;
+    --yellow-mid: #E3C81F; --yellow-soft: #3D3412; --span-j: #CDB65A;
+    --violet: #6A42FF; --violet-hover: #7C58FF; --violet-mid: #9480FF; --violet-half: #B5A8FF; --violet-soft: #2E2470; --violet-text: #A894FF;
+    --red: #FF4B52; --red-text: #FF6A70; --red-mid: #FF8A8F; --red-soft: #3E1A2A;
+    --hatch: #4A3F8F; --p1-line: #FFDB14; --p2-line: #A894FF;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #110C2B; --card: #1B1442; --field: #241C55; --ink: #F4F1FF; --muted: #B3A9E6; --hair: #33296E;
+  --yellow-mid: #E3C81F; --yellow-soft: #3D3412; --span-j: #CDB65A;
+  --violet: #6A42FF; --violet-hover: #7C58FF; --violet-mid: #9480FF; --violet-half: #B5A8FF; --violet-soft: #2E2470; --violet-text: #A894FF;
+  --red: #FF4B52; --red-text: #FF6A70; --red-mid: #FF8A8F; --red-soft: #3E1A2A;
+  --hatch: #4A3F8F; --p1-line: #FFDB14; --p2-line: #A894FF;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.5; }
+.page { max-width: 1360px; margin: 0 auto; padding-inline: clamp(16px, 4vw, 44px); padding-block: 24px 48px; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+h2 { font-family: var(--f-display); font-weight: 400; font-size: 19px; line-height: 1.2; letter-spacing: .005em; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--violet); outline-offset: 2px; }
+[hidden] { display: none !important; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- Kopfband: der eine laute Moment ---------- */
+.masthead { background: var(--yellow); color: var(--on-yellow); border-radius: 28px; padding: clamp(22px, 4vw, 40px) clamp(20px, 4vw, 44px);
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 18px 32px; margin-bottom: 30px; }
+.brand { display: flex; flex-direction: column; gap: 18px; min-width: 0; max-width: 100%; }
+.wordmark { font-family: var(--f-display); font-weight: 400; font-size: clamp(28px, calc((100vw - 90px) / 9.4), 96px); line-height: .64; letter-spacing: -.02em;
+  display: grid; white-space: nowrap; padding-top: .16em; margin-bottom: .1em; max-width: 100%; }
+.wordmark .w { display: block; }
+.wordmark .w1 { color: #FFFFFF; }
+.wordmark .w2 { color: var(--brand-violet); }
+.wordmark .w3 { color: var(--brand-red); }
+@media (prefers-reduced-motion: no-preference) {
+  .wordmark .w { animation: stack .6s cubic-bezier(.2, 1.4, .4, 1) both; }
+  .wordmark .w2 { animation-delay: .09s; } .wordmark .w3 { animation-delay: .18s; }
+  @keyframes stack { from { opacity: 0; transform: translateY(-.35em); } to { opacity: 1; transform: none; } }
+}
+.lede { margin: 0; max-width: 54ch; font-size: 16px; font-weight: 500; color: var(--on-yellow); }
+.lede b { font-weight: 800; background: linear-gradient(transparent 52%, #FFFFFF 52%, #FFFFFF 92%, transparent 92%); }
+.badges { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.yearpill { font-weight: 800; font-size: 15px; padding: 8px 16px; border-radius: 999px; background: #FFFFFF; color: #1A1446; white-space: nowrap; }
+.yearpill span { color: var(--brand-red); }
+.sticker { font-weight: 800; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; padding: 8px 14px; background: var(--brand-red); color: #FFFFFF; border-radius: 999px; transform: rotate(3deg); white-space: nowrap; }
+
+.layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
+@media (min-width: 1060px) {
+  .layout { grid-template-columns: 360px minmax(0, 1fr); gap: 36px; align-items: start; }
+  .settings { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); max-height: calc(100vh - 32px); overflow-y: auto;
+    padding: 4px 8px 12px 4px; margin: -4px -8px -12px -4px; scrollbar-width: thin; }
+}
+
+/* ---------- Karten: ruhig, flach ---------- */
+.group, .panel, .summary, .calwrap { background: var(--card); border: 1.5px solid var(--hair); border-radius: 22px; }
+
+/* ---------- Eingaben ---------- */
+.settings { display: flex; flex-direction: column; gap: 16px; }
+.group { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.group h2 { display: flex; align-items: center; gap: 10px; }
+.group h2 .n { display: inline-grid; place-items: center; width: 30px; height: 30px; flex: none; border-radius: 50%; background: var(--yellow); color: var(--on-yellow); font-size: 15px; line-height: 1; }
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.field > span, fieldset legend, .lbl { font-size: 13.5px; font-weight: 700; color: var(--muted); }
+.row2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+input[type=number], input[type=date], input[type=text], select {
+  width: 100%; min-width: 0; min-height: 42px; padding: 9px 12px; border: 1.5px solid var(--hair); border-radius: 12px; background: var(--field); font-weight: 600; transition: border-color .15s ease; }
+input[type=number]:hover, input[type=date]:hover, input[type=text]:hover, select:hover { border-color: var(--violet-mid); }
+input[type=number] { font-variant-numeric: tabular-nums; }
+input::placeholder { color: var(--muted); opacity: .8; font-weight: 500; }
+fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+fieldset legend { padding: 0; margin-bottom: 8px; }
+.hint { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.45; }
+.check { display: flex; gap: 12px; align-items: flex-start; font-size: 15px; font-weight: 700; cursor: pointer; }
+.check input { margin-top: 2px; accent-color: var(--violet); width: 20px; height: 20px; flex: none; cursor: pointer; }
+.check small { display: block; color: var(--muted); font-size: 13px; font-weight: 500; }
+
+.wrows { display: flex; flex-direction: column; gap: 8px; }
+.wrow { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; align-items: center; }
+#wdSet.ab .wrow { grid-template-columns: 4.6em minmax(0, 1fr); }
+.wl { font-size: 13px; font-weight: 800; color: var(--muted); white-space: nowrap; }
+.chips { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
+.chip { position: relative; }
+.chip input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.chip span { display: block; text-align: center; padding: 8px 0; border-radius: 10px; font-weight: 800; font-size: 13px; color: var(--muted); background: var(--field); border: 1.5px solid var(--hair); transition: background .15s ease; }
+.chip input:checked + span { background: var(--violet); border-color: var(--violet); color: var(--on-violet); }
+.chip input:focus-visible + span { outline: 3px solid var(--violet); outline-offset: 2px; }
+
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; padding: 4px; border-radius: 999px; background: var(--field); border: 1.5px solid var(--hair); }
+.seg label { position: relative; display: block; min-width: 0; }
+.seg input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.seg span { display: flex; align-items: center; justify-content: center; gap: 7px; text-align: center; padding: 7px 10px; border-radius: 999px; font-size: 14px; font-weight: 700; color: var(--muted); white-space: nowrap; transition: background .15s ease, color .15s ease; }
+.seg b { font-weight: inherit; overflow: hidden; text-overflow: ellipsis; }
+.seg input:checked + span { background: var(--violet); color: var(--on-violet); }
+.seg input:focus-visible + span { outline: 3px solid var(--violet); outline-offset: 2px; }
+@media (hover: hover) { .seg label:hover span { color: var(--ink); } .seg label:hover input:checked + span { color: var(--on-violet); } }
+
+.pdot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; flex: none; }
+.pdot.p1 { background: var(--yellow); box-shadow: inset 0 0 0 2px var(--p1-line); } .pdot.p2 { background: var(--violet-mid); box-shadow: inset 0 0 0 2px var(--violet); }
+.seg input:checked + span .pdot { box-shadow: 0 0 0 2px #FFFFFF; }
+
+.rhy-box { padding: 14px; border-radius: 14px; background: var(--field); border: 1.5px dashed var(--hair); gap: 10px; }
+.warnhint { color: var(--red-text); }
+
+.months { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.mbtn { border: 1.5px solid var(--hair); background: var(--field); border-radius: 12px; padding: 6px 2px 5px; display: flex; flex-direction: column; align-items: center; gap: 0; line-height: 1.2; }
+.mbtn b { font-size: 14px; font-weight: 800; }
+.mbtn i { font-style: normal; font-size: 12px; font-weight: 600; color: var(--muted); }
+.mbtn[data-v=gern] { background: var(--yellow); border-color: var(--yellow); color: var(--on-yellow); }
+.mbtn[data-v=gern] i { color: var(--on-yellow); }
+.mbtn[data-v=ungern] { border-style: dashed; border-color: var(--muted); color: var(--muted); }
+.mbtn[data-v=nie] { background-image: repeating-linear-gradient(135deg, transparent 0 4px, var(--hatch) 4px 5px); color: var(--muted); }
+.mbtn[data-v=nie] b { text-decoration: line-through; }
+
+.addrange { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.addrange .full { grid-column: 1 / -1; }
+.btn { border: 0; background: var(--violet); color: var(--on-violet); border-radius: 999px; padding: 11px 22px; font-weight: 800; transition: background .15s ease, transform .1s ease; }
+.btn:hover { background: var(--violet-hover); }
+.btn:active { transform: scale(.97); }
+.marklist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.marklist li { display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 12px; border-radius: 12px; background: var(--field); font-size: 14px; font-weight: 600; }
+.marklist .what { font-size: 13px; color: var(--muted); margin-left: auto; white-space: nowrap; font-weight: 500; }
+.marklist button { border: 0; background: transparent; color: var(--muted); width: 28px; height: 28px; border-radius: 50%; font-size: 18px; line-height: 1; flex: none; }
+.marklist button:hover { color: #FFFFFF; background: var(--red); }
+.sw { width: 14px; height: 14px; border-radius: 4px; flex: none; }
+.sw.must { box-shadow: inset 0 0 0 2px var(--violet); border-radius: 50%; }
+.sw.block { background-image: repeating-linear-gradient(135deg, transparent 0 2px, var(--hatch) 2px 3px); box-shadow: inset 0 0 0 1px var(--hatch); }
+.sw.free { background: var(--violet-soft); box-shadow: inset 0 0 0 2px var(--violet); }
+.linkbtn { border: 0; background: none; padding: 0; color: var(--violet-text); text-decoration: underline; text-underline-offset: 3px; font-size: 14px; font-weight: 700; align-self: flex-start; }
+
+/* ---------- Ergebnisse ---------- */
+.results { min-width: 0; display: flex; flex-direction: column; gap: 28px; }
+
+/* Pläne als Tickets: das gewählte in vollem Violett */
+.plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.plan { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; text-align: left; padding: 0; background: var(--card); color: var(--ink); border: 1.5px solid var(--hair); border-radius: 20px; min-width: 0; transition: transform .12s ease, border-color .12s ease; }
+@media (hover: hover) { .plan:hover { transform: translateY(-2px); border-color: var(--violet-mid); } }
+.plan:active { transform: scale(.98); }
+.pt-main { padding: 15px 14px 15px 18px; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.pt-main .pn { font-weight: 800; font-size: 15px; }
+.pt-main .pd { font-size: 13px; color: var(--muted); line-height: 1.35; }
+.pt-main .delta { align-self: flex-start; white-space: nowrap; font-size: 12px; font-weight: 800; padding: 3px 9px; border-radius: 999px; background: var(--yellow); color: var(--on-yellow); margin-top: 6px; }
+.pt-stub { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 16px; min-width: 6.2em; border-left: 2px dashed var(--hair); text-align: center; }
+.pt-stub::before, .pt-stub::after { content: ""; position: absolute; left: -11px; width: 20px; height: 20px; border-radius: 50%; background: var(--bg); }
+.pt-stub::before { top: -11px; } .pt-stub::after { bottom: -11px; }
+.pt-stub b { font-family: var(--f-display); font-weight: 400; font-size: 34px; line-height: 1; font-variant-numeric: tabular-nums; }
+.pt-stub span { font-size: 12px; font-weight: 700; color: var(--muted); line-height: 1.25; margin-top: 5px; }
+.plan[aria-selected=true] { background: var(--violet); border-color: var(--violet); color: var(--on-violet); }
+.plan[aria-selected=true] .pd, .plan[aria-selected=true] .pt-stub span { color: rgba(255, 255, 255, .82); }
+.plan[aria-selected=true] .pt-stub { border-left-color: rgba(255, 255, 255, .45); }
+.plan[aria-selected=true] .pt-stub b { text-shadow: 3px 3px 0 var(--brand-red); }
+@media (prefers-reduced-motion: no-preference) { .delta { animation: pop .4s cubic-bezier(.3, 1.8, .5, 1) both; } @keyframes pop { from { transform: scale(.5); opacity: 0; } to { transform: none; opacity: 1; } } }
+@media (max-width: 720px) { .plans { grid-template-columns: minmax(0, 1fr); gap: 12px; } }
+
+/* Ergebnis: gelbe Kachel mit der großen Zahl */
+.summary { padding: 22px 24px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px 26px; align-items: center; }
+.burst { width: 128px; height: 128px; border-radius: 26px; background: var(--yellow); display: grid; place-items: center; transform: rotate(-4deg); }
+.burst i { display: none; }
+.burst b { font-family: var(--f-display); font-weight: 400; font-size: 54px; line-height: 1; color: var(--brand-violet); text-shadow: 3px 3px 0 var(--brand-red); font-variant-numeric: tabular-nums; }
+.summary .txt { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.summary .txt strong { font-family: var(--f-display); font-weight: 400; font-size: 23px; line-height: 1.15; }
+.summary .txt p { margin: 0; color: var(--muted); max-width: 60ch; font-size: 15px; }
+.budget { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 7px; padding-top: 14px; border-top: 1.5px dashed var(--hair); }
+.budget + .budget { border-top: 0; padding-top: 4px; }
+.budget .who { font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+.bar { display: flex; height: 12px; border-radius: 999px; overflow: hidden; background: var(--field); box-shadow: inset 0 0 0 1.5px var(--hair); }
+.bar i { display: block; height: 100%; }
+.bar .u { background: var(--yellow); } .bar .p { background: var(--violet); } .bar .r { background: var(--red-mid); } .bar .g { background: var(--yellow-mid); }
+.bar .x { background: repeating-linear-gradient(135deg, transparent 0 3px, var(--red) 3px 5px); }
+.budget ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 13.5px; color: var(--muted); }
+.budget li { display: flex; align-items: center; gap: 6px; }
+.budget li b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.budget .lg.g { background: var(--yellow-mid); }
+.budget .lg.p { background: var(--violet); }
+.empty { color: var(--muted); font-size: 15px; margin: 0; }
+@media (max-width: 560px) { .summary { grid-template-columns: minmax(0, 1fr); justify-items: start; padding: 20px; } .burst { width: 108px; height: 108px; } .burst b { font-size: 44px; } }
+
+.sec-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; margin-bottom: 14px; }
+.sec-head h2 { font-size: 22px; }
+.sec-head p { margin: 0; font-size: 14px; color: var(--muted); }
+
+/* Tipps: weiße Karten, nur das Etikett trägt Farbe */
+.tips { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr)); gap: 16px; }
+.tip { position: relative; background: var(--card); border: 1.5px solid var(--hair); border-radius: 18px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.tip .tag { align-self: flex-start; font-size: 11.5px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; line-height: 1; padding: 6px 10px; border-radius: 999px; background: var(--violet); color: var(--on-violet); }
+.tip.k-cheaper .tag, .tip.k-solo .tag { background: var(--violet-soft); color: var(--violet-text); }
+.tip.k-plus .tag { background: var(--yellow); color: var(--on-yellow); }
+.tip.k-warn .tag { background: var(--red); color: #FFFFFF; }
+.tip.k-warn { border-color: var(--red-mid); }
+.tip .tt { font-weight: 800; font-size: 16px; line-height: 1.3; }
+.tip p { margin: 0; font-size: 14.5px; }
+.tip .note { font-size: 13px; color: var(--muted); }
+.tip .show { align-self: flex-start; margin-top: auto; border: 0; background: none; color: var(--violet-text); padding: 4px 0 0; font-size: 14px; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
+
+/* Kalender */
+.calwrap { padding: 22px 24px 26px; }
+.paint { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); font-weight: 600; }
+.paint .seg { display: inline-grid; }
+.paint .seg span { padding: 5px 12px; font-size: 13.5px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 8px; font-size: 13px; color: var(--muted); margin: 2px 0 20px; }
+.legend > span { display: inline-flex; align-items: center; gap: 7px; padding: 4px 10px 4px 6px; border-radius: 999px; background: var(--field); }
+.lg { width: 18px; height: 12px; border-radius: 4px; display: inline-block; position: relative; flex: none; }
+.lg.u { background: var(--yellow); } .lg.p { background: var(--violet-mid); } .lg.r { background: var(--red-mid); }
+.lg.g { background: linear-gradient(135deg, var(--ink) 0 5px, transparent 5px), var(--yellow); }
+.lg.s { background: var(--yellow-soft); box-shadow: inset 0 0 0 1px var(--hatch); }
+.lg.split { background: linear-gradient(to bottom, var(--yellow) 0 50%, var(--violet-mid) 50% 100%); }
+.lg.f { background: linear-gradient(to top, var(--violet) 3px, transparent 3px); box-shadow: inset 0 0 0 1px var(--hair); }
+.lg.h { color: var(--red-text); font-weight: 900; font-size: 12px; width: auto; height: auto; }
+.lg.m { box-shadow: inset 0 0 0 2px var(--violet); border-radius: 50%; width: 14px; height: 14px; }
+.lg.b { background-image: repeating-linear-gradient(135deg, transparent 0 2px, var(--hatch) 2px 3px); box-shadow: inset 0 0 0 1px var(--hatch); }
+.lg.y, .lg.o1, .lg.o2 { font-weight: 700; font-size: 12px; width: auto; height: auto; color: var(--ink); text-decoration: underline dotted; text-underline-offset: 3px; text-decoration-thickness: 2px; }
+.lg.o1 { text-decoration-color: var(--p1-line); } .lg.o2 { text-decoration-color: var(--p2-line); }
+
+.calendar { display: grid; grid-template-columns: repeat(auto-fill, minmax(206px, 1fr)); gap: 26px 30px; }
+.month h3 { font-family: var(--f-display); font-weight: 400; font-size: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.month h3 small { font-family: var(--f-body); font-size: 12px; font-weight: 800; line-height: 1; color: var(--muted); }
+.month h3 small.has { color: var(--on-yellow); background: var(--yellow); padding: 4px 9px; border-radius: 999px; }
+.grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); row-gap: 4px; }
+.wd { font-size: 11px; font-weight: 800; text-align: center; color: var(--muted); padding-bottom: 4px; }
+.wd.we { color: var(--red-text); }
+.d { position: relative; aspect-ratio: 1 / 1; border: 0; padding: 0; background: transparent; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink); border-radius: 0; }
+@media (hover: hover) { .d:hover { box-shadow: inset 0 0 0 2px var(--violet-mid); border-radius: 8px; } }
+.d.off { color: var(--muted); }
+.d.hol { color: var(--red-text); font-weight: 900; }
+.d.sch::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--violet); opacity: .75; }
+.d.span { background: var(--yellow-soft); }
+.d.vac { background: var(--yellow); color: var(--on-yellow); font-weight: 800; }
+.d.vac.k-rest { background: var(--red-mid); }
+.d.vac.k-gleit { background: linear-gradient(135deg, var(--on-yellow) 0 6px, transparent 6px), var(--yellow); }
+.d.vac.half { background: linear-gradient(135deg, var(--yellow) 50%, var(--yellow-soft) 50%); }
+.d.jv { background: linear-gradient(to bottom, var(--top, transparent) 0 50%, var(--bot, transparent) 50% 100%); }
+.t-s { --top: var(--span-j); } .b-s { --bot: var(--span-j); }
+.t-u, .t-g, .t-gh { --top: var(--yellow); } .t-uh { --top: var(--yellow-mid); }
+.b-p, .b-g, .b-gh { --bot: var(--violet-mid); } .b-ph { --bot: var(--violet-half); }
+.t-r, .t-rh { --top: var(--red-mid); } .b-r, .b-rh { --bot: var(--red-mid); }
+.d.jv.t-g, .d.jv.t-gh { background: linear-gradient(135deg, var(--on-yellow) 0 6px, transparent 6px), linear-gradient(to bottom, var(--top) 0 50%, var(--bot) 50% 100%); }
+.d.jv.b-g, .d.jv.b-gh { background: linear-gradient(-45deg, var(--on-yellow) 0 6px, transparent 6px), linear-gradient(to bottom, var(--top) 0 50%, var(--bot) 50% 100%); }
+.d.jv.t-g.b-g { background: linear-gradient(135deg, var(--on-yellow) 0 6px, transparent 6px), linear-gradient(-45deg, var(--on-yellow) 0 6px, transparent 6px), linear-gradient(to bottom, var(--top) 0 50%, var(--bot) 50% 100%); }
+.d.jv { color: var(--on-yellow); }
+.d.vtxt { color: var(--on-yellow); font-weight: 800; }
+.d.jv.hol, .d.vtxt.hol, .d.vac.hol { color: var(--brand-red); }
+.d.l { border-top-left-radius: 999px; border-bottom-left-radius: 999px; }
+.d.r { border-top-right-radius: 999px; border-bottom-right-radius: 999px; }
+.d.o1, .d.o2, .d.rhy { text-decoration: underline dotted; text-underline-offset: 3px; text-decoration-thickness: 2px; }
+.d.o1 { text-decoration-color: var(--p1-line); } .d.o2 { text-decoration-color: var(--p2-line); } .d.rhy { text-decoration-color: var(--muted); }
+.d.must::before { content: ""; position: absolute; inset: 2px; border-radius: 50%; box-shadow: inset 0 0 0 2px var(--violet); }
+.d.given::before { content: ""; position: absolute; top: 3px; right: 3px; width: 6px; height: 6px; border-radius: 50%; background: var(--violet); }
+.d.blk { background-image: repeating-linear-gradient(135deg, transparent 0 3px, var(--hatch) 3px 4px); color: var(--muted); text-decoration: line-through; }
+.d.pv { box-shadow: inset 0 2px 0 var(--red), inset 0 -2px 0 var(--red); }
+.d.pv.pl { box-shadow: inset 0 2px 0 var(--red), inset 0 -2px 0 var(--red), inset 2px 0 0 var(--red); }
+.d.pv.pr { box-shadow: inset 0 2px 0 var(--red), inset 0 -2px 0 var(--red), inset -2px 0 0 var(--red); }
+.d.pv.pl.pr { box-shadow: inset 0 0 0 2px var(--red); }
+.d:focus-visible { outline: 3px solid var(--violet); outline-offset: 1px; z-index: 2; border-radius: 8px; }
+
+/* Urlaube & Brücken */
+.cols2 { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
+@media (min-width: 940px) { .cols2 { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: start; } }
+.panel { padding: 22px 24px; min-width: 0; }
+.trips, .chancen { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.trips li, .chancen li { display: grid; grid-template-columns: 3.4em minmax(0, 1fr); gap: 3px 14px; padding: 14px 0; border-top: 1.5px dashed var(--hair); }
+.trips li:first-child, .chancen li:first-child { border-top: 0; padding-top: 2px; }
+.trips li:last-child, .chancen li:last-child { padding-bottom: 0; }
+.trips .len, .chancen .len { grid-row: span 3; font-family: var(--f-display); font-weight: 400; font-size: 28px; line-height: 1; color: var(--violet-text); font-variant-numeric: tabular-nums; }
+.trips .len small, .chancen .len small { display: block; font-family: var(--f-body); font-size: 12px; font-weight: 700; color: var(--muted); margin-top: 5px; }
+.trips .rng, .chancen .rng { font-weight: 800; }
+.trips .meta, .chancen .meta { font-size: 13.5px; color: var(--muted); }
+.tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 3px; }
+.tags:empty { display: none; }
+.tg { font-size: 12px; font-weight: 700; padding: 2px 9px; border-radius: 999px; background: var(--field); color: var(--muted); }
+.tg.hol { color: var(--red-text); background: transparent; padding-left: 0; }
+.tg.in { background: var(--yellow); color: var(--on-yellow); }
+.tg.gift { background: var(--violet); color: var(--on-violet); }
+.trips button.rng { border: 0; background: none; padding: 0; text-align: left; text-decoration: underline; text-decoration-color: var(--hair); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+.trips button.rng:hover { text-decoration-color: var(--violet); }
+
+.antrag textarea { width: 100%; min-height: 220px; resize: vertical; border: 1.5px dashed var(--hair); border-radius: 14px; padding: 14px 16px; background: var(--field);
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 13px; line-height: 1.6; }
+.antrag .act { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 14px; }
+.antrag .act span { font-size: 14px; font-weight: 800; color: var(--violet-text); }
+
+footer { margin-top: 44px; padding: 18px 4px 0; border-top: 1.5px dashed var(--hair); font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 28px; }
+footer a { color: inherit; font-weight: 700; }
+@media (prefers-reduced-motion: no-preference) { .results { transition: opacity .15s ease; } .results.busy { opacity: .65; } }
+@media (max-width: 480px) {
+  .group, .panel, .calwrap { padding: 18px; }
+  .calendar { grid-template-columns: repeat(auto-fill, minmax(136px, 1fr)); gap: 20px 14px; }
+  .d { font-size: 12px; } .wd { font-size: 10px; }
+  .seg span { padding: 7px 6px; font-size: 13px; }
+  .masthead { border-radius: 22px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="masthead">
+    <div class="brand">
+      <h1 class="wordmark" aria-label="Brückenbauer"><span class="w w1" aria-hidden="true">Brückenbauer</span><span class="w w2" aria-hidden="true">Brückenbauer</span><span class="w w3" aria-hidden="true">Brückenbauer</span></h1>
+      <p class="lede">Trag ein, wie du arbeitest und was du dir wünschst. Der Planer legt deine Urlaubstage so, dass <b>möglichst viele freie Tage am Stück</b> entstehen, mit echten Feiertagen und Schulferien.</p>
+    </div>
+    <div class="badges">
+      <span class="yearpill">Planungsjahr <span>2027</span></span>
+      <span class="sticker">Prototyp</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <form class="settings" id="settings" autocomplete="off" novalidate>
+      <section class="group" aria-labelledby="g0">
+        <h2 id="g0">Wer plant?</h2>
+        <label class="check"><input type="checkbox" id="partner"><span>Gemeinsam mit Partner planen<small>Der Planer sucht Tage, an denen ihr beide frei habt.</small></span></label>
+        <div id="whoWrap" class="field" hidden>
+          <div class="row2">
+            <label class="field"><span>Dein Name</span><input type="text" id="name1" maxlength="20" placeholder="Ich"></label>
+            <label class="field"><span>Name Partner</span><input type="text" id="name2" maxlength="20" placeholder="Partner"></label>
+          </div>
+          <span class="lbl">Unten eintragen für</span>
+          <div class="seg persons" id="editWho" role="radiogroup" aria-label="Angaben bearbeiten für">
+            <label><input type="radio" name="editWho" value="p1" checked><span><i class="pdot p1"></i><b id="tab1">Ich</b></span></label>
+            <label><input type="radio" name="editWho" value="p2"><span><i class="pdot p2"></i><b id="tab2">Partner</b></span></label>
+          </div>
+          <p class="hint">Arbeitszeit und Urlaubstage trägst du für jede Person einzeln ein. Wünsche und feste Termine gelten für euch beide.</p>
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="g1">
+        <h2 id="g1"><span class="n">1</span><i class="pdot" id="dot1" hidden></i><span id="g1t">So arbeitest du</span></h2>
+        <label class="field"><span>Bundesland (Arbeitsort)</span><select id="land"></select></label>
+        <div id="lokal" class="field" hidden></div>
+        <fieldset id="wdSet">
+          <legend>Arbeitstage</legend>
+          <div class="wrows">
+            <div class="wrow"><span class="wl" id="wlA" hidden>Woche A</span><div class="chips" id="workdays"></div></div>
+            <div class="wrow" id="rowB" hidden><span class="wl">Woche B</span><div class="chips" id="workdaysB"></div></div>
+          </div>
+        </fieldset>
+        <label class="check"><input type="checkbox" id="rhythmus"><span>Zwei-Wochen-Rhythmus<small>z. B. jeden zweiten Freitag frei</small></span></label>
+        <div class="field rhy-box" id="rhyWrap" hidden>
+          <span>Woche B gilt in</span>
+          <div class="seg" id="bParity">
+            <label><input type="radio" name="bParity" value="gerade"><span>geraden KW</span></label>
+            <label><input type="radio" name="bParity" value="ungerade"><span>ungeraden KW</span></label>
+          </div>
+          <p class="hint" id="rhyHint"></p>
+          <p class="hint warnhint">2026 hat 53 Kalenderwochen. Läuft der Rhythmus einfach durch, wird aus „gerade“ im Januar 2027 „ungerade“. Am besten im Dienstplan nachsehen.</p>
+        </div>
+        <p class="hint" id="avgHint" hidden></p>
+        <div class="row2">
+          <label class="field"><span>Heiligabend</span>
+            <select id="heiligabend"><option value="voll">Arbeitstag</option><option value="halb">halber Tag</option><option value="frei">frei</option></select></label>
+          <label class="field"><span>Silvester</span>
+            <select id="silvester"><option value="voll">Arbeitstag</option><option value="halb">halber Tag</option><option value="frei">frei</option></select></label>
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="g2">
+        <h2 id="g2"><span class="n">2</span><i class="pdot" id="dot2" hidden></i><span id="g2t">Deine Tage</span></h2>
+        <div class="row2">
+          <label class="field"><span>Urlaubstage 2027</span><input type="number" id="urlaub" min="0" max="60" step="1" inputmode="numeric"></label>
+          <label class="field"><span>Resturlaub 2026</span><input type="number" id="rest" min="0" max="30" step="1" inputmode="numeric"></label>
+        </div>
+        <label class="field" id="restBisWrap"><span>Resturlaub verfällt am</span><input type="date" id="restBis" min="2027-01-01" max="2027-12-31"></label>
+        <label class="check"><input type="checkbox" id="gleitzeit"><span>Gleitzeit<small>Überstunden lassen sich als ganze freie Tage abbauen.</small></span></label>
+        <label class="field" id="gleitWrap"><span>Gleittage, die 2027 möglich sind</span><input type="number" id="gleit" min="0" max="30" step="1" inputmode="numeric"></label>
+      </section>
+
+      <section class="group" aria-labelledby="g3">
+        <h2 id="g3"><span class="n">3</span><span id="g3t">Deine Wünsche</span></h2>
+        <label class="field"><span>Ein Haupturlaub mit mindestens</span>
+          <select id="haupt"><option value="0">kein Haupturlaub nötig</option><option value="9">9 Tagen am Stück</option><option value="14">14 Tagen am Stück</option><option value="16">16 Tagen am Stück</option><option value="21">21 Tagen am Stück</option></select></label>
+        <div class="row2">
+          <label class="field"><span>Urlaube höchstens</span>
+            <select id="maxTrips"><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="8">8</option><option value="10">10</option></select></label>
+          <label class="field"><span>Abstand dazwischen</span>
+            <select id="abstand"><option value="0">egal</option><option value="1">mind. 1 Woche</option><option value="2">mind. 2 Wochen</option><option value="4">mind. 4 Wochen</option></select></label>
+        </div>
+        <div class="row2">
+          <label class="field"><span>Kürzester Urlaub</span>
+            <select id="minLen"><option value="3">3 Tage</option><option value="4">4 Tage</option><option value="5">5 Tage</option><option value="7">7 Tage</option></select></label>
+          <label class="field"><span>Längster Urlaub</span>
+            <select id="maxLen"><option value="10">10 Tage</option><option value="16">16 Tage</option><option value="21">21 Tage</option><option value="28">28 Tage</option><option value="999">beliebig</option></select></label>
+        </div>
+        <fieldset>
+          <legend>Schulferien</legend>
+          <div class="seg" id="ferien">
+            <label><input type="radio" name="ferien" value="meiden"><span>meiden</span></label>
+            <label><input type="radio" name="ferien" value="egal"><span>egal</span></label>
+            <label><input type="radio" name="ferien" value="bevorzugen"><span>bevorzugen</span></label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Monate · tippen zum Ändern</legend>
+          <div class="months" id="months"></div>
+        </fieldset>
+      </section>
+
+      <section class="group" aria-labelledby="g4">
+        <h2 id="g4"><span class="n">4</span>Feste Termine</h2>
+        <p class="hint" id="g4hint">Tippe im Kalender auf einen Tag oder trag einen Zeitraum ein.</p>
+        <div class="addrange">
+          <label class="field"><span>von</span><input type="date" id="fromDate" min="2027-01-01" max="2027-12-31"></label>
+          <label class="field"><span>bis</span><input type="date" id="toDate" min="2027-01-01" max="2027-12-31"></label>
+          <label class="field full"><span>Art</span>
+            <select id="markType"><option value="must">Muss frei sein (kostet Urlaub)</option><option value="block">Gesperrt, kein Urlaub möglich</option><option value="free">Schon frei, z. B. vom Arbeitgeber</option></select></label>
+          <button type="button" class="btn full" id="addRange">Eintragen</button>
+        </div>
+        <ul class="marklist" id="markList"></ul>
+        <button type="button" class="linkbtn" id="reset">Beispielwerte wiederherstellen</button>
+      </section>
+    </form>
+
+    <main class="results" id="results">
+      <div class="plans" role="tablist" aria-label="Pläne" id="plans"></div>
+      <section class="summary" id="summary" aria-live="polite"></section>
+
+      <section>
+        <div class="sec-head"><h2>Noch besser</h2><p>Was passiert, wenn du etwas verschiebst oder einen Tag mehr hast</p></div>
+        <ul class="tips" id="tips"></ul>
+      </section>
+
+      <section class="calwrap" id="cal">
+        <div class="sec-head">
+          <h2 id="calTitle">Dein Jahr 2027</h2>
+          <div class="paint"><span>Tippen markiert als</span>
+            <div class="seg" id="paint" role="radiogroup" aria-label="Markierung beim Tippen">
+              <label><input type="radio" name="paint" value="must" checked><span>muss frei</span></label>
+              <label><input type="radio" name="paint" value="block"><span>gesperrt</span></label>
+              <label><input type="radio" name="paint" value="free"><span>schon frei</span></label>
+            </div>
+          </div>
+        </div>
+        <div class="legend" id="legend"></div>
+        <div class="calendar" id="calendar"></div>
+      </section>
+
+      <div class="cols2">
+        <section class="panel">
+          <div class="sec-head"><h2 id="tripsTitle">Deine Urlaube</h2><p id="tripsSub"></p></div>
+          <ol class="trips" id="trips"></ol>
+        </section>
+        <section class="panel">
+          <div class="sec-head"><h2 id="chTitle">Beste Brücken</h2></div>
+          <ul class="chancen" id="chancen"></ul>
+        </section>
+      </div>
+
+      <section class="panel antrag">
+        <div class="sec-head"><h2>Text für den Urlaubsantrag</h2><p id="antragSub">Zum Einfügen in eine Mail an deine Führungskraft</p></div>
+        <textarea id="antrag" readonly aria-label="Text für den Urlaubsantrag"></textarea>
+        <div class="act"><button type="button" class="btn" id="copy">Text kopieren</button><span id="copied" role="status"></span></div>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <span>Feiertage und Schulferien 2027: <a href="https://www.openholidaysapi.org/" target="_blank" rel="noopener">OpenHolidays API</a> (CC BY 4.0), Stand Oktober 2026.</span>
+    <span>Angaben ohne Gewähr. Wochenenden und Feiertage im Urlaub zählen als freie Tage.</span>
+  </footer>
+</div>
+
+<script>
+/* ===== Brückenbauer – Daten & Optimierer (2027) ===== */
+var YEAR = 2027;
+var DAYS_IN_YEAR = 365;
+
+var LAENDER = {
+  BW: 'Baden-Württemberg', BY: 'Bayern', BE: 'Berlin', BB: 'Brandenburg',
+  HB: 'Bremen', HH: 'Hamburg', HE: 'Hessen', MV: 'Mecklenburg-Vorpommern',
+  NI: 'Niedersachsen', NW: 'Nordrhein-Westfalen', RP: 'Rheinland-Pfalz',
+  SL: 'Saarland', SN: 'Sachsen', ST: 'Sachsen-Anhalt', SH: 'Schleswig-Holstein',
+  TH: 'Thüringen'
+};
+
+/* Gesetzliche Feiertage 2027 (OpenHolidays API, abgeglichen mit eigener Osterrechnung).
+   '*' = bundesweit, 'local:x' = nur wenn die lokale Option x aktiv ist. */
+var FEIERTAGE = [
+  ['2027-01-01', 'Neujahr', '*'],
+  ['2027-01-06', 'Heilige Drei Könige', 'BW,BY,ST'],
+  ['2027-03-08', 'Internationaler Frauentag', 'BE,MV'],
+  ['2027-03-26', 'Karfreitag', '*'],
+  ['2027-03-28', 'Ostersonntag', 'BB'],
+  ['2027-03-29', 'Ostermontag', '*'],
+  ['2027-05-01', 'Tag der Arbeit', '*'],
+  ['2027-05-06', 'Christi Himmelfahrt', '*'],
+  ['2027-05-16', 'Pfingstsonntag', 'BB'],
+  ['2027-05-17', 'Pfingstmontag', '*'],
+  ['2027-05-27', 'Fronleichnam', 'BW,BY,HE,NW,RP,SL,local:fronleichnam'],
+  ['2027-08-08', 'Augsburger Friedensfest', 'local:augsburg'],
+  ['2027-08-15', 'Mariä Himmelfahrt', 'SL,local:mariae'],
+  ['2027-09-20', 'Weltkindertag', 'TH'],
+  ['2027-10-03', 'Tag der Deutschen Einheit', '*'],
+  ['2027-10-31', 'Reformationstag', 'BB,HB,HH,MV,NI,SN,ST,SH,TH'],
+  ['2027-11-01', 'Allerheiligen', 'BW,BY,NW,RP,SL'],
+  ['2027-11-17', 'Buß- und Bettag', 'SN'],
+  ['2027-12-25', '1. Weihnachtstag', '*'],
+  ['2027-12-26', '2. Weihnachtstag', '*']
+];
+
+/* Lokale Feiertage, die nur in Teilen eines Landes gelten */
+var LOKAL = {
+  BY: [
+    { key: 'mariae', label: 'Mariä Himmelfahrt (15.8.) ist bei mir Feiertag', hint: 'gilt in Gemeinden mit überwiegend katholischer Bevölkerung', def: true },
+    { key: 'augsburg', label: 'Ich arbeite in Augsburg (Friedensfest, 8.8.)', hint: '', def: false }
+  ],
+  SN: [{ key: 'fronleichnam', label: 'Fronleichnam (27.5.) ist bei mir Feiertag', hint: 'nur in einigen Gemeinden der Oberlausitz', def: false }],
+  TH: [{ key: 'fronleichnam', label: 'Fronleichnam (27.5.) ist bei mir Feiertag', hint: 'nur in einigen Gemeinden im Eichsfeld und Wartburgkreis', def: false }]
+};
+
+/* Schulferien 2027 (OpenHolidays API, Stand Oktober 2026), auf 2027 gekürzt.
+   MV: allgemeinbildende Schulen, SH: Festland. */
+var SCHULFERIEN = {
+  BW: [['01-01', '01-09', 'Weihnachtsferien'], ['03-25', '03-25', 'Gründonnerstag'], ['03-30', '04-03', 'Osterferien'], ['05-18', '05-29', 'Pfingstferien'], ['07-29', '09-11', 'Sommerferien'], ['11-02', '11-06', 'Herbstferien'], ['12-23', '12-31', 'Weihnachtsferien']],
+  BY: [['01-01', '01-08', 'Weihnachtsferien'], ['02-08', '02-12', 'Frühjahrsferien'], ['03-22', '04-02', 'Osterferien'], ['05-18', '05-28', 'Pfingstferien'], ['08-02', '09-13', 'Sommerferien'], ['11-02', '11-05', 'Herbstferien'], ['11-17', '11-17', 'Buß- und Bettag'], ['12-24', '12-31', 'Weihnachtsferien']],
+  BE: [['01-01', '01-02', 'Weihnachtsferien'], ['02-01', '02-06', 'Winterferien'], ['03-22', '04-02', 'Osterferien'], ['05-07', '05-07', 'Unterrichtsfreier Tag'], ['05-18', '05-19', 'Pfingstferien'], ['07-01', '08-14', 'Sommerferien'], ['10-11', '10-23', 'Herbstferien'], ['12-22', '12-31', 'Weihnachtsferien']],
+  BB: [['01-01', '01-02', 'Weihnachtsferien'], ['02-01', '02-06', 'Winterferien'], ['03-22', '04-03', 'Osterferien'], ['05-07', '05-07', 'Variabler Ferientag'], ['05-18', '05-18', 'Pfingstferien'], ['07-01', '08-14', 'Sommerferien'], ['10-11', '10-23', 'Herbstferien'], ['12-23', '12-31', 'Weihnachtsferien']],
+  HB: [['01-01', '01-09', 'Weihnachtsferien'], ['02-01', '02-02', 'Halbjahresferien'], ['03-22', '04-03', 'Osterferien'], ['05-07', '05-07', 'Tag nach Himmelfahrt'], ['05-18', '05-18', 'Pfingstferien'], ['07-08', '08-18', 'Sommerferien'], ['10-18', '10-30', 'Herbstferien'], ['12-23', '12-31', 'Weihnachtsferien']],
+  HH: [['01-01', '01-01', 'Weihnachtsferien'], ['01-29', '01-29', 'Halbjahrespause'], ['03-01', '03-12', 'Frühjahrsferien'], ['05-07', '05-14', 'Pfingstferien'], ['07-01', '08-11', 'Sommerferien'], ['10-11', '10-22', 'Herbstferien'], ['12-20', '12-31', 'Weihnachtsferien']],
+  HE: [['01-01', '01-12', 'Weihnachtsferien'], ['03-22', '04-02', 'Osterferien'], ['06-28', '08-06', 'Sommerferien'], ['10-04', '10-16', 'Herbstferien'], ['12-23', '12-31', 'Weihnachtsferien']],
+  MV: [['01-01', '01-02', 'Weihnachtsferien'], ['02-08', '02-19', 'Winterferien'], ['03-24', '04-02', 'Osterferien'], ['05-07', '05-07', 'Zusätzlicher Ferientag'], ['05-14', '05-18', 'Pfingstferien'], ['07-05', '08-14', 'Sommerferien'], ['10-14', '10-23', 'Herbstferien'], ['11-25', '11-26', 'Zusätzliche Ferientage'], ['12-22', '12-31', 'Weihnachtsferien']],
+  NI: [['01-01', '01-09', 'Weihnachtsferien'], ['02-01', '02-02', 'Halbjahresferien'], ['03-22', '04-03', 'Osterferien'], ['05-07', '05-07', 'Tag nach Himmelfahrt'], ['05-18', '05-18', 'Pfingstferien'], ['07-08', '08-18', 'Sommerferien'], ['10-16', '10-30', 'Herbstferien'], ['12-23', '12-31', 'Weihnachtsferien']],
+  NW: [['01-01', '01-06', 'Weihnachtsferien'], ['03-22', '04-03', 'Osterferien'], ['05-18', '05-18', 'Pfingstferien'], ['07-19', '08-31', 'Sommerferien'], ['10-23', '11-06', 'Herbstferien'], ['12-24', '12-31', 'Weihnachtsferien']],
+  RP: [['01-01', '01-08', 'Weihnachtsferien'], ['03-22', '04-02', 'Osterferien'], ['06-28', '08-06', 'Sommerferien'], ['10-04', '10-15', 'Herbstferien'], ['12-23', '12-31', 'Weihnachtsferien']],
+  SL: [['02-08', '02-12', 'Fastnachtsferien'], ['03-30', '04-09', 'Osterferien'], ['06-28', '08-06', 'Sommerferien'], ['10-04', '10-15', 'Herbstferien'], ['12-20', '12-31', 'Weihnachtsferien']],
+  SN: [['01-01', '01-02', 'Weihnachtsferien'], ['02-08', '02-19', 'Winterferien'], ['03-26', '04-02', 'Osterferien'], ['05-07', '05-07', 'Unterrichtsfreier Tag'], ['05-15', '05-18', 'Pfingstferien'], ['07-10', '08-20', 'Sommerferien'], ['10-11', '10-23', 'Herbstferien'], ['12-23', '12-31', 'Weihnachtsferien']],
+  ST: [['01-01', '01-02', 'Weihnachtsferien'], ['02-01', '02-06', 'Winterferien'], ['03-22', '03-27', 'Osterferien'], ['05-15', '05-22', 'Pfingstferien'], ['07-10', '08-20', 'Sommerferien'], ['10-18', '10-23', 'Herbstferien'], ['12-20', '12-31', 'Weihnachtsferien']],
+  SH: [['01-01', '01-06', 'Weihnachtsferien'], ['03-30', '04-10', 'Osterferien'], ['05-07', '05-07', 'Tag nach Himmelfahrt'], ['07-03', '08-14', 'Sommerferien'], ['10-11', '10-23', 'Herbstferien'], ['12-23', '12-31', 'Weihnachtsferien']],
+  TH: [['01-01', '01-02', 'Weihnachtsferien'], ['02-01', '02-06', 'Winterferien'], ['03-22', '04-03', 'Osterferien'], ['05-07', '05-07', 'Schulfreier Tag'], ['07-10', '08-20', 'Sommerferien'], ['10-09', '10-23', 'Herbstferien'], ['12-23', '12-31', 'Weihnachtsferien']]
+};
+
+var MONATE = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+var MONATE_KURZ = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+var WT = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+
+function pad2(n) { return (n < 10 ? '0' : '') + n; }
+function dateOf(i) { return new Date(Date.UTC(YEAR, 0, 1 + i)); }
+function isoOf(i) { var d = dateOf(i); return d.getUTCFullYear() + '-' + pad2(d.getUTCMonth() + 1) + '-' + pad2(d.getUTCDate()); }
+function indexOfIso(iso) {
+  var p = iso.split('-');
+  return Math.round((Date.UTC(+p[0], +p[1] - 1, +p[2]) - Date.UTC(YEAR, 0, 1)) / 86400000);
+}
+function fmtDay(i) { var d = dateOf(i); return WT[(d.getUTCDay() + 6) % 7] + ' ' + d.getUTCDate() + '.' + (d.getUTCMonth() + 1) + '.'; }
+function fmtShort(i) { var d = dateOf(i); return d.getUTCDate() + '.' + (d.getUTCMonth() + 1) + '.'; }
+function fmtLong(i) { var d = dateOf(i); return WT[(d.getUTCDay() + 6) % 7] + ', ' + d.getUTCDate() + '. ' + MONATE[d.getUTCMonth()]; }
+function fmtRange(s, e) {
+  var a = dateOf(s), b = dateOf(e);
+  if (a.getUTCMonth() === b.getUTCMonth()) return a.getUTCDate() + '.–' + b.getUTCDate() + '. ' + MONATE[b.getUTCMonth()];
+  return a.getUTCDate() + '. ' + MONATE_KURZ[a.getUTCMonth()] + ' – ' + b.getUTCDate() + '. ' + MONATE_KURZ[b.getUTCMonth()];
+}
+/* ISO-Kalenderwoche (1.–3.1.2027 gehören noch zu KW 53 von 2026) */
+function isoWeek(i) {
+  var d = dateOf(i), dn = (d.getUTCDay() + 6) % 7;
+  d.setUTCDate(d.getUTCDate() - dn + 3);
+  var ft = new Date(Date.UTC(d.getUTCFullYear(), 0, 4));
+  return 1 + Math.round(((d - ft) / 86400000 - 3 + ((ft.getUTCDay() + 6) % 7)) / 7);
+}
+/* Arbeitstage eines Tages – mit optionalem Zwei-Wochen-Rhythmus (Woche A / Woche B nach gerader oder ungerader KW) */
+function weekKind(cfg, kw) {
+  if (!cfg.rhythmus) return 'A';
+  var even = kw % 2 === 0;
+  return (even === (cfg.bParity !== 'ungerade')) ? 'B' : 'A';
+}
+function patternFor(cfg, wk) { return wk === 'B' ? (cfg.workdaysB || cfg.workdays) : cfg.workdays; }
+function hasWorkdays(cfg) {
+  var a = cfg.workdays.some(Boolean), b = cfg.rhythmus && (cfg.workdaysB || []).some(Boolean);
+  return a || b;
+}
+function avgWorkdays(cfg) {
+  var a = 0, b = 0;
+  for (var k = 0; k < 7; k++) { if (cfg.workdays[k]) a++; if (patternFor(cfg, 'B')[k]) b++; }
+  return cfg.rhythmus ? (a + b) / 2 : a;
+}
+
+function fmtNum(x) { return (Math.round(x * 10) / 10).toString().replace('.', ','); }
+
+/* ---------- Jahr aufbauen ---------- */
+function prepare(cfg) {
+  var hol = {}, sch = {};
+  FEIERTAGE.forEach(function (f) {
+    var scope = f[2].split(','), ok = false;
+    scope.forEach(function (s) {
+      if (s === '*' || s === cfg.land) ok = true;
+      if (s.indexOf('local:') === 0) {
+        var k = s.slice(6), opts = LOKAL[cfg.land] || [];
+        opts.forEach(function (o) { if (o.key === k && cfg.lokal && cfg.lokal[k]) ok = true; });
+      }
+    });
+    if (ok) hol[f[0]] = f[1];
+  });
+  (SCHULFERIEN[cfg.land] || []).forEach(function (r) {
+    var s = indexOfIso(YEAR + '-' + r[0]), e = indexOfIso(YEAR + '-' + r[1]);
+    for (var i = s; i <= e; i++) sch[i] = r[2];
+  });
+  var days = [];
+  for (var i = 0; i < DAYS_IN_YEAR; i++) {
+    var d = dateOf(i), iso = isoOf(i), dow = (d.getUTCDay() + 6) % 7, m = d.getUTCMonth(), dom = d.getUTCDate();
+    var mark = (cfg.marks && cfg.marks[iso]) || null;
+    var kw = isoWeek(i), wk = weekKind(cfg, kw);
+    var works = !!patternFor(cfg, wk)[dow];
+    var rhy = !!(cfg.rhythmus && !works && patternFor(cfg, wk === 'A' ? 'B' : 'A')[dow]);
+    var cost = 0;
+    if (works && !hol[iso] && mark !== 'free') {
+      cost = 2;
+      if (m === 11 && dom === 24) cost = cfg.heiligabend === 'frei' ? 0 : cfg.heiligabend === 'halb' ? 1 : 2;
+      if (m === 11 && dom === 31) cost = cfg.silvester === 'frei' ? 0 : cfg.silvester === 'halb' ? 1 : 2;
+    }
+    days.push({ i: i, iso: iso, dow: dow, m: m, dom: dom, kw: kw, wk: wk, rhy: rhy, holiday: hol[iso] || null, school: sch[i] || null, mark: mark, works: works, cost: cost });
+  }
+  return days;
+}
+
+/* ---------- Optimierer ----------
+   Ein Urlaub = zusammenhängende Arbeitstage W[a..b], die man frei nimmt.
+   Er verlängert sich automatisch um die freien Tage davor und danach (Wochenende, Feiertage).
+   Dynamische Programmierung über die Arbeitstage: Zustand = (Position, verbrauchte Halbtage, Anzahl Urlaube, Haupturlaub erfüllt).
+   Resturlaub: Beim Überschreiten des Verfallsdatums wird der Verbrauch auf mindestens den Resturlaub angehoben –
+   nicht genutzter Resturlaub verfällt damit genau so, wie es in der Praxis passiert. */
+var MW = { gern: 1.35, egal: 1, ungern: 0.7, nie: 0.5 };
+var FW = { meiden: 0.75, egal: 1, bevorzugen: 1.3 };
+var MAXW = 30;
+
+function dayWeight(day, cfg, countOnly) {
+  var mw = MW[cfg.monate[day.m]] || 1;
+  var fw = day.school ? (FW[cfg.ferien] || 1) : 1;
+  if (countOnly) return 1 + 0.01 * (mw - 1) + 0.01 * (fw - 1);
+  return mw * fw;
+}
+
+function budgetHalf(cfg) { return 2 * ((+cfg.urlaub || 0) + (+cfg.rest || 0) + (cfg.gleitzeit ? (+cfg.gleit || 0) : 0)); }
+
+/* ---------- Zwei Personen ----------
+   Persönlich: Arbeitsmodell und Tage. Gemeinsam: Wünsche und feste Termine. */
+var PERSON_KEYS = ['land', 'lokal', 'workdays', 'rhythmus', 'workdaysB', 'bParity', 'heiligabend', 'silvester', 'urlaub', 'rest', 'restBis', 'gleitzeit', 'gleit'];
+function personCfg(cfg) {
+  var c = {}, k, p = cfg.p2 || {};
+  for (k in cfg) if (k !== 'p2') c[k] = cfg[k];
+  PERSON_KEYS.forEach(function (key) { if (p[key] !== undefined) c[key] = p[key]; });
+  c.partner = false;
+  return c;
+}
+function nameOf(cfg, who) {
+  if (who === 2) return (cfg.p2 && cfg.p2.name && String(cfg.p2.name).trim()) || 'Partner';
+  return (cfg.name1 && String(cfg.name1).trim()) || 'Ich';
+}
+/* Tage für beide: cost = Urlaubskosten Person 1, cost2 = Person 2 (0, wenn kein Partner) */
+function prepareAll(cfg) {
+  var d1 = prepare(cfg), d2 = cfg.partner ? prepare(personCfg(cfg)) : null;
+  d1.forEach(function (d, i) {
+    var e = d2 ? d2[i] : null;
+    d.cost2 = e ? e.cost : 0; d.works2 = e ? e.works : false; d.holiday2 = e ? e.holiday : null;
+    d.rhy2 = e ? e.rhy : false; d.wk2 = e ? e.wk : null;
+  });
+  return d1;
+}
+
+/* ---------- Optimierer ----------
+   Ein Urlaub = zusammenhängende Arbeitstage W[a..b] (Tage, an denen mindestens eine Person arbeitet),
+   die alle frei nehmen. Er verlängert sich um die Tage davor und danach, an denen ohnehin alle frei haben.
+   Dynamische Programmierung: Zustand = (Position, verbrauchte Halbtage von Person A, Anzahl Urlaube, Haupturlaub erfüllt).
+   Person B (nur im Partnermodus) wird über einen Preis pro Urlaubstag (lambda) ins Budget gedrückt.
+   Resturlaub: Beim Überschreiten des Verfallsdatums wird der Verbrauch auf mindestens den Resturlaub angehoben. */
+function optimize(days, cfg, o) {
+  var swap = !!o.swap, lam = o.lambda || 0;
+  var kA = swap ? 'cost2' : 'cost', kB = swap ? 'cost' : 'cost2';
+  var pA = swap ? personCfg(cfg) : cfg;
+  var W = [];
+  for (var i = 0; i < days.length; i++) if (days[i].cost > 0 || days[i].cost2 > 0) W.push(i);
+  var n = W.length;
+  var B = Math.max(0, budgetHalf(pA) + (o.extra || 0));
+  var R = 2 * (+pA.rest || 0);
+  var E = n;
+  if (R > 0 && pA.restBis) {
+    var ex = indexOfIso(pA.restBis);
+    E = 0; while (E < n && W[E] <= ex) E++;
+  }
+  var cost = new Int8Array(n), costB = new Int8Array(n), allowed = new Uint8Array(n), must = new Uint8Array(n);
+  for (var p = 0; p < n; p++) {
+    var d = days[W[p]];
+    cost[p] = d[kA]; costB[p] = d[kB];
+    must[p] = d.mark === 'must' ? 1 : 0;
+    allowed[p] = (d.mark !== 'block' && (cfg.monate[d.m] !== 'nie' || must[p])) ? 1 : 0;
+  }
+  var nextMust = new Int32Array(n + 2);
+  nextMust[n] = n; nextMust[n + 1] = n;
+  for (p = n - 1; p >= 0; p--) nextMust[p] = must[p] ? p : nextMust[p + 1];
+  var wPre = new Float64Array(DAYS_IN_YEAR + 1);
+  for (i = 0; i < DAYS_IN_YEAR; i++) wPre[i + 1] = wPre[i] + dayWeight(days[i], cfg, o.countOnly);
+  function spanStart(p) { return p === 0 ? 0 : W[p - 1] + 1; }
+  function spanEnd(b) { return b >= n - 1 ? DAYS_IN_YEAR - 1 : W[b + 1] - 1; }
+
+  var T = Math.max(1, o.maxTrips | 0), F = o.hauptMin > 0 ? 2 : 1;
+  var U = B + 1, sP = U * (T + 1) * F, sU = (T + 1) * F, sT = F;
+  var size = (n + 1) * sP;
+  var val = new Float64Array(size).fill(-Infinity);
+  var par = new Int32Array(size).fill(-1);
+  var parB = new Int16Array(size).fill(-1);
+  val[0] = 0;
+  var gap = o.gapDays | 0, minLen = o.minLen | 0, haupt = o.hauptMin | 0, maxLen = o.maxLen || 999;
+
+  for (p = 0; p < n; p++) {
+    var baseP = p * sP;
+    for (var u = 0; u <= B; u++) {
+      var baseU = baseP + u * sU;
+      for (var t = 0; t <= T; t++) {
+        for (var f = 0; f < F; f++) {
+          var idx = baseU + t * sT + f;
+          var v = val[idx];
+          if (v === -Infinity) continue;
+          if (!must[p]) {
+            var u2 = (p < E && p + 1 >= E) ? Math.max(u, R) : u;
+            if (u2 <= B) {
+              var j = (p + 1) * sP + u2 * sU + t * sT + f;
+              if (v > val[j]) { val[j] = v; par[j] = idx; parB[j] = -1; }
+            }
+          }
+          if (t >= T) continue;
+          var c = 0, cb = 0, cB = 0, hasMust = false, s = spanStart(p);
+          for (var b = p; b < n && b - p < MAXW; b++) {
+            if (!allowed[b]) break;
+            c += cost[b]; if (b < E) cb += cost[b];
+            cB += costB[b];
+            if (must[b]) hasMust = true;
+            if (u + c > B) break;
+            var e = spanEnd(b), len = e - s + 1;
+            if (len > maxLen) break;
+            if (len < minLen && !hasMust) continue;
+            var q = b + 2;
+            if (gap > 0) { while (q <= n && q - 1 < n && W[q - 1] < e + gap) q++; }
+            if (q > n) q = n;
+            if (b + 1 < n && nextMust[b + 1] < q) continue;
+            var un = (p < E && q >= E) ? Math.max(u + cb, R) + (c - cb) : u + c;
+            if (un > B) continue;
+            var f2 = F === 2 ? ((f === 1 || len >= haupt) ? 1 : 0) : 0;
+            var gain = wPre[e + 1] - wPre[s] - 0.02 - lam * cB / 2;
+            var k = q * sP + un * sU + (t + 1) * sT + f2;
+            if (v + gain > val[k]) { val[k] = v + gain; par[k] = idx; parB[k] = b; }
+          }
+        }
+      }
+    }
+  }
+  var best = -1, bestV = -Infinity, baseN = n * sP;
+  for (u = 0; u <= B; u++) for (t = 0; t <= T; t++) {
+    var id = baseN + u * sU + t * sT + (F - 1);
+    if (val[id] > bestV + 1e-9) { bestV = val[id]; best = id; }
+  }
+  if (best < 0 || bestV === -Infinity) return null;
+  var blocks = [], cur = best;
+  while (cur > 0 && par[cur] >= 0) {
+    var pr = par[cur], bb = parB[cur];
+    if (bb >= 0) blocks.push({ a: Math.floor(pr / sP), b: bb });
+    cur = pr;
+  }
+  blocks.reverse();
+  return finishPlan(days, cfg, W, blocks, spanStart, spanEnd);
+}
+
+/* Herkunft der Tage je Person: Resturlaub zuerst (bis Verfall), Gleittage für kurze Brücken, Rest Urlaub */
+function labelPerson(days, key, pc, blocks) {
+  var kind = {}, used = 0, all = [];
+  blocks.forEach(function (bl) { bl.vac.forEach(function (i) { if (days[i][key] > 0) { all.push(i); used += days[i][key]; } }); });
+  all.sort(function (x, y) { return x - y; });
+  var R = 2 * (+pc.rest || 0), restLeft = R, restUsed = 0, ex = pc.restBis ? indexOfIso(pc.restBis) : -1;
+  all.forEach(function (i) {
+    var c = days[i][key];
+    if (restLeft >= c && i <= ex) { kind[i] = 'rest'; restLeft -= c; restUsed += c; }
+  });
+  var gLeft = pc.gleitzeit ? 2 * (+pc.gleit || 0) : 0, gUsed = 0;
+  if (gLeft > 0) {
+    var order = blocks.slice().sort(function (x, y) { return x[key === 'cost' ? 'c1' : 'c2'] - y[key === 'cost' ? 'c1' : 'c2'] || x.s - y.s; });
+    order.forEach(function (bl) {
+      bl.vac.forEach(function (i) {
+        var c = days[i][key];
+        if (c > 0 && gLeft >= c && !kind[i]) { kind[i] = 'gleit'; gLeft -= c; gUsed += c; }
+      });
+    });
+  }
+  all.forEach(function (i) { if (!kind[i]) kind[i] = 'urlaub'; });
+  var budget = budgetHalf(pc), forfeit = Math.max(0, R - restUsed);
+  return {
+    kind: kind, usedHalf: used, restUsedHalf: restUsed, gleitUsedHalf: gUsed, urlaubUsedHalf: used - restUsed - gUsed,
+    forfeitHalf: forfeit, leftHalf: Math.max(0, budget - used - forfeit), overHalf: Math.max(0, used + forfeit - budget), budgetHalf: budget
+  };
+}
+
+function finishPlan(days, cfg, W, blocks, spanStart, spanEnd) {
+  var out = [];
+  blocks.forEach(function (bl) {
+    var s = spanStart(bl.a), e = spanEnd(bl.b), vac = [], c1 = 0, c2 = 0, school = 0, hol = [];
+    for (var p = bl.a; p <= bl.b; p++) { var i = W[p]; vac.push(i); c1 += days[i].cost; c2 += days[i].cost2; }
+    for (var k = s; k <= e; k++) {
+      if (days[k].school) school++;
+      var h = days[k].holiday || days[k].holiday2;
+      if (h && days[k].dow < 5 && hol.indexOf(h) < 0) hol.push(h);
+    }
+    out.push({ a: bl.a, b: bl.b, s: s, e: e, len: e - s + 1, vac: vac, c1: c1, c2: c2, costHalf: c1, school: school, holidays: hol });
+  });
+  var P1 = labelPerson(days, 'cost', cfg, out);
+  var P2 = cfg.partner ? labelPerson(days, 'cost2', personCfg(cfg), out) : null;
+  var freeTotal = 0; out.forEach(function (bl) { freeTotal += bl.len; });
+  return {
+    blocks: out, W: W, freeTotal: freeTotal, p1: P1, p2: P2,
+    kind: P1.kind, usedHalf: P1.usedHalf, restUsedHalf: P1.restUsedHalf, gleitUsedHalf: P1.gleitUsedHalf, urlaubUsedHalf: P1.urlaubUsedHalf,
+    forfeitHalf: P1.forfeitHalf, leftHalf: P1.leftHalf,
+    over: P1.overHalf > 0 || (P2 ? P2.overHalf > 0 : false),
+    totalUsed: P1.usedHalf + (P2 ? P2.usedHalf : 0)
+  };
+}
+
+/* ---------- Pläne ---------- */
+var PLAENE = [
+  { id: 'ausgewogen', name: 'Wunschplan', desc: 'Haupturlaub, Monate und Abstände wie eingestellt' },
+  { id: 'maximal', name: 'Maximal frei', desc: 'Die meisten freien Tage, ohne Vorgaben zu Länge und Anzahl' },
+  { id: 'verteilt', name: 'Übers Jahr verteilt', desc: 'Regelmäßig raus, mindestens 5 Wochen zwischen den Urlauben' }
+];
+
+function planOptions(id, cfg) {
+  if (id === 'maximal') return { hauptMin: 0, maxTrips: 14, minLen: 3, maxLen: 999, gapDays: 0, countOnly: true };
+  if (id === 'verteilt') return { hauptMin: 0, maxTrips: Math.max(8, +cfg.maxTrips || 6), minLen: Math.max(4, +cfg.minLen || 3), maxLen: Math.min(16, +cfg.maxLen || 16), gapDays: Math.max(35, 7 * (+cfg.abstand || 0)), countOnly: false };
+  return { hauptMin: +cfg.haupt || 0, maxTrips: +cfg.maxTrips || 6, minLen: +cfg.minLen || 3, maxLen: Math.max(+cfg.maxLen || 999, +cfg.haupt || 0), gapDays: 7 * (+cfg.abstand || 0), countOnly: false };
+}
+
+function copyOpts(o, extra) { var c = {}, k; for (k in o) c[k] = o[k]; for (k in extra) c[k] = extra[k]; return c; }
+
+/* Für Paare: erst prüfen, ob eine Person ohnehin nicht knapp ist; sonst den Preis für die Tage
+   der zweiten Person schrittweise erhöhen, bis ihr Budget reicht. */
+function runPlan(days, cfg, o) {
+  if (!cfg.partner) return optimize(days, cfg, o);
+  var best = null, lastOver = null;
+  function consider(r) {
+    if (!r) return;
+    if (r.over) { if (!lastOver) lastOver = r; return; }
+    if (!best || r.freeTotal > best.freeTotal || (r.freeTotal === best.freeTotal && r.totalUsed < best.totalUsed)) best = r;
+  }
+  var rA = optimize(days, cfg, copyOpts(o, { swap: false, lambda: 0 }));
+  if (!rA) return null;
+  consider(rA);
+  if (best) return best;
+  consider(optimize(days, cfg, copyOpts(o, { swap: true, lambda: 0 })));
+  if (best) return best;
+  [false, true].forEach(function (sw) {
+    var lo = 0, hi = 4;
+    for (var it = 0; it < 6; it++) {
+      var mid = (lo + hi) / 2;
+      var r = optimize(days, cfg, copyOpts(o, { swap: sw, lambda: mid }));
+      if (r && !r.over) { consider(r); hi = mid; } else lo = mid;
+    }
+  });
+  if (!best) consider(optimize(days, cfg, copyOpts(o, { swap: false, lambda: 12 })));
+  if (!best && lastOver) { lastOver.overWarn = true; return lastOver; }
+  return best;
+}
+
+function solve(days, cfg, id) {
+  var o = planOptions(id, cfg);
+  var res = runPlan(days, cfg, o), relaxed = null;
+  if (!res && o.hauptMin > 0) { o.hauptMin = 0; res = runPlan(days, cfg, o); if (res) relaxed = 'haupt'; }
+  if (!res) { o.maxTrips += 4; o.minLen = 1; o.maxLen = 999; o.gapDays = 0; res = runPlan(days, cfg, o); if (res) relaxed = relaxed || 'regeln'; }
+  if (res) { res.relaxed = relaxed; res.opts = o; }
+  return res;
+}
+
+/* ---------- Tipps (der "Flugsuche-Effekt") ---------- */
+function plural(x, one, many) { return fmtNum(x) + ' ' + (x === 1 ? one : many); }
+
+function tipsFor(days, cfg, id, res) {
+  var tips = [];
+  if (!res) return tips;
+  var joint = !!cfg.partner, n1 = nameOf(cfg, 1), n2 = nameOf(cfg, 2);
+  var W = res.W, n = W.length, o = res.opts;
+  function spanStart(p) { return p === 0 ? 0 : W[p - 1] + 1; }
+  function spanEnd(b) { return b >= n - 1 ? DAYS_IN_YEAR - 1 : W[b + 1] - 1; }
+  var taken = new Uint8Array(n), must = new Uint8Array(n), allowed = new Uint8Array(n), c1 = new Int8Array(n), c2 = new Int8Array(n);
+  res.blocks.forEach(function (bl) { for (var p = bl.a; p <= bl.b; p++) taken[p] = 1; });
+  for (var p = 0; p < n; p++) {
+    var d = days[W[p]];
+    c1[p] = d.cost; c2[p] = d.cost2;
+    must[p] = d.mark === 'must' ? 1 : 0;
+    allowed[p] = (d.mark !== 'block' && (cfg.monate[d.m] !== 'nie' || must[p])) ? 1 : 0;
+  }
+  function blocksOf(tk) {
+    var out = [];
+    for (var p = 0; p < n; p++) {
+      if (!tk[p]) continue;
+      var a = p, m = must[p];
+      while (p + 1 < n && tk[p + 1]) { p++; if (must[p]) m = 1; }
+      var s = spanStart(a), e = spanEnd(p);
+      out.push({ a: a, b: p, s: s, e: e, len: e - s + 1, must: m });
+    }
+    return out;
+  }
+  function totalOf(bl) { var t = 0; bl.forEach(function (x) { t += x.len; }); return t; }
+  function schoolOf(bl) { var c = 0; bl.forEach(function (x) { for (var i = x.s; i <= x.e; i++) if (days[i].school) c++; }); return c; }
+  function valid(bl) {
+    if (bl.length > o.maxTrips) return false;
+    var hauptOk = !(o.hauptMin > 0) || !!res.relaxed;
+    for (var k = 0; k < bl.length; k++) {
+      var x = bl[k];
+      if (x.len > (o.maxLen || 999)) return false;
+      if (!x.must && x.len < (o.minLen || 0)) return false;
+      if (k > 0 && x.s - bl[k - 1].e - 1 < (o.gapDays || 0)) return false;
+      if (o.hauptMin > 0 && x.len >= o.hauptMin) hauptOk = true;
+    }
+    return hauptOk;
+  }
+  function blockWith(bl, q) { for (var k = 0; k < bl.length; k++) if (bl[k].a <= q && q <= bl[k].b) return bl[k]; return null; }
+  function whoPays(q) {
+    if (!joint) return '';
+    if (c1[q] && c2[q]) return 'beide';
+    return c1[q] ? n1 : n2;
+  }
+  var base = res.freeTotal, baseSchool = schoolOf(blocksOf(taken));
+  var tk = new Uint8Array(taken);
+
+  // 1) Tausch: einen Urlaubstag gegen einen besseren tauschen (gleiche Kosten für jede Person)
+  var swap = null;
+  for (var r = 0; r < n; r++) {
+    if (!taken[r] || must[r]) continue;
+    tk[r] = 0;
+    for (var q = 0; q < n; q++) {
+      if (taken[q] || !allowed[q] || c1[q] !== c1[r] || c2[q] !== c2[r]) continue;
+      tk[q] = 1;
+      var bl = blocksOf(tk), tot = totalOf(bl);
+      if (tot > base && valid(bl)) {
+        var gain = tot - base, notes = [];
+        var mr = days[W[r]].m, mq = days[W[q]].m;
+        if (cfg.monate[mr] === 'gern' && cfg.monate[mq] !== 'gern') notes.push('dafür ein Tag weniger im ' + MONATE[mr] + ', ' + (joint ? 'eurem' : 'deinem') + ' Wunschmonat');
+        if (cfg.monate[mq] === 'ungern') notes.push(MONATE[mq] + ' ist als „ungern“ markiert');
+        if (cfg.ferien === 'meiden' && schoolOf(bl) > baseSchool) notes.push('dafür mehr Tage in den Schulferien');
+        var score = gain * 10 - notes.length;
+        if (!swap || score > swap.score) swap = { r: r, q: q, gain: gain, notes: notes, score: score, blk: blockWith(bl, q) };
+      }
+      tk[q] = 0;
+    }
+    tk[r] = 1;
+  }
+  if (swap) {
+    var half = (c1[swap.q] === 1 || c2[swap.q] === 1);
+    var who = whoPays(swap.q);
+    tips.push({
+      kind: 'swap', gain: swap.gain,
+      title: 'Tausch-Tipp: +' + plural(swap.gain, 'freier Tag', 'freie Tage'),
+      text: (joint ? 'Nehmt ' : 'Nimm ') + fmtLong(W[swap.q]) + ' statt ' + fmtLong(W[swap.r]) + (half ? ' (halber Tag)' : '') + ' frei' +
+        (joint && who !== 'beide' ? ' (Urlaubstag nur bei: ' + who + ')' : '') + '. Dann ' + (joint ? 'habt ihr ' : 'hast du ') + fmtRange(swap.blk.s, swap.blk.e) + ' am Stück frei, bei gleich vielen Urlaubstagen.',
+      note: swap.notes.join(' · '),
+      to: { s: swap.blk.s, e: swap.blk.e }
+    });
+  }
+
+  // 2) Ganzen Urlaub verschieben
+  var shifts = [];
+  res.blocks.forEach(function (bl) {
+    for (var p = bl.a; p <= bl.b; p++) if (must[p]) return;
+    var best = null;
+    for (var dd = -7; dd <= 7; dd++) {
+      if (!dd) continue;
+      var a2 = bl.a + dd; if (a2 < 0 || a2 >= n) continue;
+      var s1 = 0, s2 = 0, b2 = -1, ok = true;
+      for (var q = a2; q < n; q++) {
+        if (!allowed[q] || must[q]) { ok = false; break; }
+        s1 += c1[q]; s2 += c2[q];
+        if (s1 === bl.c1 && s2 === bl.c2) { b2 = q; break; }
+        if (s1 > bl.c1 || s2 > bl.c2) { ok = false; break; }
+      }
+      if (!ok || b2 < 0) continue;
+      var t2 = new Uint8Array(taken);
+      for (q = bl.a; q <= bl.b; q++) t2[q] = 0;
+      var clash = false;
+      for (q = a2; q <= b2; q++) { if (t2[q]) clash = true; t2[q] = 1; }
+      if (clash) continue;
+      var nb = blocksOf(t2);
+      if (nb.length !== res.blocks.length || !valid(nb)) continue;
+      var gain = totalOf(nb) - base, me = blockWith(nb, a2);
+      var sOld = schoolOf([bl]), sNew = schoolOf([me]);
+      var useful = gain > 0 || (gain === 0 && cfg.ferien !== 'bevorzugen' && sOld >= 3 && sNew === 0);
+      if (!useful) continue;
+      var score = gain * 10 + (sOld - sNew) * 0.3 - Math.abs(dd) * 0.01;
+      if (!best || score > best.score) best = { me: me, gain: gain, sOld: sOld, sNew: sNew, score: score, a: a2, b: b2 };
+    }
+    if (!best) return;
+    if (swap && swap.blk && best.me.s === swap.blk.s && best.me.e === swap.blk.e) return;
+    var shiftDays = best.me.s - bl.s;
+    var dir = shiftDays > 0 ? plural(shiftDays, 'Tag', 'Tage') + ' nach hinten' : plural(-shiftDays, 'Tag', 'Tage') + ' nach vorn';
+    var notes = [];
+    if (best.sNew > best.sOld && cfg.ferien === 'meiden') notes.push('dafür mehr Tage in den Schulferien');
+    if (best.sNew === 0 && best.sOld > 0) notes.push('außerhalb der Schulferien, Reisen sind dann meist günstiger');
+    for (var q2 = best.a; q2 <= best.b; q2++) { var mm = days[W[q2]].m; if (cfg.monate[mm] === 'ungern') { notes.push(MONATE[mm] + ' ist als „ungern“ markiert'); break; } }
+    shifts.push({
+      kind: best.gain > 0 ? 'shift' : 'cheaper', gain: best.gain,
+      title: best.gain > 0 ? 'Verschieben: +' + plural(best.gain, 'freier Tag', 'freie Tage') : 'Gleich lang, ohne Ferien-Andrang',
+      text: best.gain > 0
+        ? (joint ? 'Legt ' : 'Leg ') + fmtRange(bl.s, bl.e) + ' um ' + dir + ': ' + fmtRange(best.me.s, best.me.e) + ' bringt ' + best.me.len + ' statt ' + bl.len + ' freie Tage, mit gleich vielen Urlaubstagen.'
+        : (joint ? 'Legt ' : 'Leg ') + fmtRange(bl.s, bl.e) + ' um ' + dir + ': ' + fmtRange(best.me.s, best.me.e) + ' ist genauso lang und kostet gleich viele Urlaubstage.',
+      note: notes.join(' · '),
+      to: { s: best.me.s, e: best.me.e }
+    });
+  });
+  shifts.sort(function (x, y) { return y.gain - x.gain; });
+  tips = tips.concat(shifts.slice(0, 2));
+
+  // 3) Ein Tag mehr
+  var add = null;
+  for (q = 0; q < n; q++) {
+    if (taken[q] || !allowed[q]) continue;
+    tk[q] = 1;
+    var bl2 = blocksOf(tk);
+    if (bl2.length <= o.maxTrips + 1) {
+      var g = totalOf(bl2) - base, cst = c1[q] + c2[q];
+      var sc = g / cst;
+      if (g > 1 && (!add || sc > add.sc || (sc === add.sc && g > add.g))) add = { q: q, g: g, sc: sc, blk: blockWith(bl2, q) };
+    }
+    tk[q] = 0;
+  }
+  if (add) {
+    var wq = whoPays(add.q), halfA = (c1[add.q] === 1 || c2[add.q] === 1);
+    var anon1 = !(cfg.name1 && String(cfg.name1).trim());
+    var subj = !joint ? 'du' : wq === 'beide' ? 'ihr beide' : (wq === n1 && anon1) ? 'du' : wq;
+    tips.push({
+      kind: 'plus', gain: add.g,
+      title: (halfA ? 'Ein halber Tag mehr' : 'Ein Tag mehr') + ' = +' + add.g + ' freie Tage',
+      text: 'Wenn ' + subj + ' ' + fmtLong(W[add.q]) + ' zusätzlich frei ' + (subj === 'du' ? 'bekommst' : subj === 'ihr beide' ? 'bekommt' : 'bekommt') +
+        ', etwa über Überstunden oder einen Gleittag, ' + (joint ? 'habt ihr ' : 'hast du ') + fmtRange(add.blk.s, add.blk.e) + ' am Stück frei.',
+      note: '', to: { s: add.blk.s, e: add.blk.e }
+    });
+  }
+
+  // 4) Übrige Tage und Verfall je Person
+  var persons = [{ P: res.p1, pc: copyOpts(cfg, { partner: false }), name: n1 }];
+  if (joint && res.p2) persons.push({ P: res.p2, pc: personCfg(cfg), name: n2 });
+  persons.forEach(function (x) {
+    var who = joint ? x.name + ': ' : '', soloR = null;
+    if (x.P.forfeitHalf > 0) {
+      var fz = x.P.forfeitHalf / 2, exI = indexOfIso(x.pc.restBis); soloR = null;
+      if (joint) {
+        chancen(prepare(x.pc), x.pc, 40).forEach(function (c) {
+          var hit = res.blocks.some(function (b) { return !(c.e < b.s || c.s > b.e); });
+          if (!hit && c.e <= exI && c.cost <= fz && (!soloR || c.len / c.cost > soloR.len / soloR.cost)) soloR = c;
+        });
+      }
+      tips.push({
+        kind: 'warn', gain: 0, title: who + plural(fz, 'Tag', 'Tage') + ' Resturlaub verfallen',
+        text: soloR ? 'Für einen gemeinsamen Urlaub vor dem ' + fmtShort(exI) + ' reichen die Tage nicht. Nimm ' + (fz === 1 ? 'ihn' : 'sie') + ' allein, z. B. ' + fmtRange(soloR.s, soloR.e) + ' (' + soloR.len + ' Tage frei für ' + plural(soloR.cost, 'Urlaubstag', 'Urlaubstage') + ').'
+          : 'Mit den Vorgaben passt nicht der ganze Resturlaub vor den ' + fmtShort(exI) + '. Lockere Sperrzeiten oder Monatswünsche im ersten Quartal.',
+        note: '', to: soloR ? { s: soloR.s, e: soloR.e } : null
+      });
+    }
+    if (x.P.leftHalf > 0) {
+      var left = x.P.leftHalf / 2;
+      if (joint) {
+        var own = prepare(x.pc), opts = chancen(own, x.pc, 40), pick = null;
+        opts.forEach(function (c) {
+          var hit = res.blocks.some(function (b) { return !(c.e < b.s || c.s > b.e); });
+          var dup = soloR && !(c.e < soloR.s || c.s > soloR.e);
+          if (!hit && !dup && c.cost <= left && (!pick || c.len / c.cost > pick.len / pick.cost)) pick = c;
+        });
+        tips.push({
+          kind: 'solo', gain: 0, title: x.name + ': noch ' + plural(left, 'Tag', 'Tage') + ' übrig',
+          text: pick ? 'Die passen in keinen gemeinsamen Urlaub mehr. Gut für ein eigenes langes Wochenende, z. B. ' + plural(pick.cost, 'Urlaubstag', 'Urlaubstage') + ' für ' + fmtRange(pick.s, pick.e) + ' (' + pick.len + ' Tage frei).'
+            : 'Die passen in keinen gemeinsamen Urlaub mehr. Nutzt sie für einzelne freie Tage oder verlängert einen Urlaub für eine Person.',
+          note: '', to: pick ? { s: pick.s, e: pick.e } : null
+        });
+      } else {
+        tips.push({ kind: 'warn', gain: 0, title: plural(left, 'Tag bleibt', 'Tage bleiben') + ' übrig', text: 'Mit deinen Vorgaben zu Anzahl, Länge und Abstand lassen sich nicht alle Tage verplanen. Erlaube einen Urlaub mehr, längere Urlaube oder einen kürzeren Abstand.', note: '' });
+      }
+    }
+  });
+  if (res.overWarn) {
+    tips.unshift({ kind: 'warn', gain: 0, title: 'Zu wenig Urlaubstage', text: 'Für eure festen Termine reichen die Tage einer Person nicht. Prüft die Einträge unter „Feste Termine“.', note: '' });
+  }
+  if (res.relaxed === 'haupt') {
+    tips.unshift({ kind: 'warn', gain: 0, title: 'Haupturlaub passt nicht', text: 'Mit dem Kontingent und den Sperrzeiten ist kein Urlaub dieser Länge möglich. Der Plan ist ohne diese Vorgabe gerechnet.', note: '' });
+  } else if (res.relaxed === 'regeln') {
+    tips.unshift({ kind: 'warn', gain: 0, title: 'Vorgaben gelockert', text: 'Die festen Termine passen nicht zu Anzahl, Länge oder Abstand der Urlaube. Der Plan ist mit gelockerten Regeln gerechnet.', note: '' });
+  }
+  return tips;
+}
+
+/* ---------- Die besten Brücken des Jahres (für eine Person oder gemeinsam) ---------- */
+function chancen(days, cfg, limit) {
+  limit = limit || 6;
+  var joint = !!cfg.partner, W = [];
+  for (var i = 0; i < days.length; i++) if (days[i].cost > 0 || (joint && days[i].cost2 > 0)) W.push(i);
+  var n = W.length, cands = [];
+  function spanStart(p) { return p === 0 ? 0 : W[p - 1] + 1; }
+  function spanEnd(b) { return b >= n - 1 ? DAYS_IN_YEAR - 1 : W[b + 1] - 1; }
+  for (var p = 0; p < n; p++) {
+    var a1 = 0, a2 = 0;
+    for (var b = p; b < n && b - p < 9; b++) {
+      a1 += days[W[b]].cost; a2 += joint ? days[W[b]].cost2 : 0;
+      var s = spanStart(p), e = spanEnd(b), len = e - s + 1, hol = null;
+      for (var k = s; k <= e; k++) {
+        var h = days[k].holiday || (joint ? days[k].holiday2 : null);
+        if (h && days[k].dow < 5 && !hol) hol = h;
+      }
+      if (!hol) continue;
+      var cd = joint ? (a1 + a2) / 4 : a1 / 2;
+      if (cd <= 0 || len - cd < 3) continue;
+      cands.push({ s: s, e: e, len: len, cost: a1 / 2, cost2: a2 / 2, ratio: len / cd, hol: hol });
+    }
+  }
+  cands.sort(function (x, y) { return y.ratio - x.ratio || y.len - x.len; });
+  var picked = [];
+  cands.forEach(function (c) {
+    if (picked.length >= limit) return;
+    var clash = picked.some(function (x) { return !(c.e < x.s || c.s > x.e) || x.hol === c.hol; });
+    if (!clash) picked.push(c);
+  });
+  picked.forEach(function (pk) {
+    var big = null;
+    cands.forEach(function (c) {
+      if (c.hol === pk.hol && c.len >= pk.len + 4 && c.ratio >= 1.6 && (!big || c.ratio > big.ratio || (c.ratio === big.ratio && c.len > big.len))) big = c;
+    });
+    pk.big = big;
+  });
+  picked.sort(function (x, y) { return x.s - y.s; });
+  return picked;
+}
+
+/* Lange freie Phasen ganz ohne Urlaubstag, die erst durch das Arbeitszeitmodell entstehen (gemeinsam, wenn Partner aktiv) */
+function geschenkt(days, cfg) {
+  var joint = !!(cfg && cfg.partner), out = [], i = 0;
+  function free(d) { return d.cost === 0 && (!joint || d.cost2 === 0); }
+  while (i < days.length) {
+    if (!free(days[i])) { i++; continue; }
+    var s = i, model = false, hol = null;
+    while (i < days.length && free(days[i])) {
+      var d = days[i];
+      if (!d.holiday && !d.holiday2 && d.dow < 5) model = true;
+      if ((d.holiday || d.holiday2) && !hol) hol = d.holiday || d.holiday2;
+      i++;
+    }
+    var e = i - 1;
+    if (e - s + 1 >= 4 && model) out.push({ s: s, e: e, len: e - s + 1, hol: hol });
+  }
+  return out;
+}
+
+if (typeof module !== 'undefined') module.exports = { prepare: prepare, prepareAll: prepareAll, personCfg: personCfg, optimize: optimize, solve: solve, tipsFor: tipsFor, chancen: chancen, geschenkt: geschenkt, isoWeek: isoWeek, fmtRange: fmtRange, fmtDay: fmtDay, isoOf: isoOf, PLAENE: PLAENE };
+
+</script>
+<script>
+(function () {
+  var KEY = 'brueckenbauer-2027-v1';
+  var P2_DEFAULTS = {
+    name: '', land: 'BY', lokal: {}, workdays: [1, 1, 1, 1, 1, 0, 0],
+    rhythmus: true, workdaysB: [1, 1, 1, 1, 0, 0, 0], bParity: 'gerade',
+    urlaub: 27, rest: 0, restBis: '2027-03-31', gleitzeit: false, gleit: 0,
+    heiligabend: 'halb', silvester: 'halb'
+  };
+  var DEFAULTS = {
+    partner: true, name1: '',
+    land: 'BY', lokal: {}, workdays: [1, 1, 1, 1, 1, 0, 0],
+    rhythmus: false, workdaysB: [1, 1, 1, 1, 0, 0, 0], bParity: 'gerade',
+    urlaub: 30, rest: 3, restBis: '2027-03-31', gleitzeit: true, gleit: 2,
+    heiligabend: 'halb', silvester: 'halb',
+    haupt: 14, maxTrips: 6, abstand: 1, minLen: 3, maxLen: 21,
+    ferien: 'meiden',
+    monate: ['egal', 'egal', 'egal', 'egal', 'egal', 'gern', 'egal', 'egal', 'gern', 'egal', 'ungern', 'egal'],
+    marks: { '2027-07-02': 'must', '2027-10-11': 'block', '2027-10-12': 'block', '2027-10-13': 'block', '2027-10-14': 'block', '2027-10-15': 'block' },
+    p2: P2_DEFAULTS
+  };
+  var SHORT = {
+    ausgewogen: function (j) { return j ? 'Nach euren Vorgaben' : 'Nach deinen Vorgaben'; },
+    maximal: function () { return 'So viel frei wie möglich'; },
+    verteilt: function () { return 'Alle paar Wochen raus'; }
+  };
+  var MARK_LABEL = { must: 'muss frei sein', block: 'gesperrt', free: 'schon frei' };
+  var MONTH_CYCLE = ['egal', 'gern', 'ungern', 'nie'];
+  var TAG = { swap: 'Tauschen', shift: 'Verschieben', cheaper: 'Günstiger reisen', plus: 'Ein Tag mehr', warn: 'Hinweis', solo: 'Allein' };
+
+  function clone(x) { return JSON.parse(JSON.stringify(x)); }
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function num(v, lo, hi) { var n = parseInt(v, 10); if (isNaN(n)) n = 0; return Math.max(lo, Math.min(hi, n)); }
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var state = (function () {
+    var s = clone(DEFAULTS);
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (raw) {
+        var o = JSON.parse(raw), k;
+        for (k in o) if (k !== 'p2') s[k] = o[k];
+        if (o.p2) for (k in o.p2) s.p2[k] = o.p2[k];
+      }
+    } catch (e) { }
+    return s;
+  })();
+  var current = 'ausgewogen', editing = 'p1';
+  try { var cp = localStorage.getItem(KEY + '-plan'); if (cp) current = cp; } catch (e) { }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); localStorage.setItem(KEY + '-plan', current); } catch (e) { } }
+
+  var paint = 'must', preview = null, days = null, results = {}, tipsCache = {}, chancenList = [], giftList = [], cfgNow = null;
+
+  function P() { return (state.partner && editing === 'p2') ? state.p2 : state; }
+  function joint() { return !!(cfgNow ? cfgNow.partner : state.partner); }
+  function nm(who) {
+    if (who === 2) return (state.p2.name || '').trim() || 'Partner';
+    return (state.name1 || '').trim() || 'Ich';
+  }
+
+  /* ---------- statische Bedienelemente ---------- */
+  var landSel = $('land');
+  Object.keys(LAENDER).sort(function (a, b) { return LAENDER[a].localeCompare(LAENDER[b], 'de'); }).forEach(function (k) {
+    var o = document.createElement('option'); o.value = k; o.textContent = LAENDER[k]; landSel.appendChild(o);
+  });
+  $('workdays').innerHTML = WT.map(function (w, i) {
+    return '<label class="chip"><input type="checkbox" id="wd' + i + '" aria-label="' + w + '"><span>' + w + '</span></label>';
+  }).join('');
+  $('workdaysB').innerHTML = WT.map(function (w, i) {
+    return '<label class="chip"><input type="checkbox" id="wdB' + i + '" aria-label="Woche B: ' + w + '"><span>' + w + '</span></label>';
+  }).join('');
+
+  function renderLokal() {
+    var pp = P(), opts = LOKAL[pp.land] || [];
+    pp.lokal = pp.lokal || {};
+    $('lokal').hidden = !opts.length;
+    $('lokal').innerHTML = opts.map(function (o) {
+      var v = pp.lokal[o.key]; if (v === undefined) v = o.def;
+      return '<label class="check"><input type="checkbox" id="lk-' + o.key + '" data-lokal="' + o.key + '"' + (v ? ' checked' : '') + '><span>' + esc(o.label) + (o.hint ? '<small>' + esc(o.hint) + '</small>' : '') + '</span></label>';
+    }).join('');
+  }
+  function renderMonths() {
+    $('months').innerHTML = MONATE_KURZ.map(function (m, i) {
+      var v = state.monate[i] || 'egal';
+      return '<button type="button" class="mbtn" id="mo' + i + '" data-m="' + i + '" data-v="' + v + '" aria-label="' + MONATE[i] + ': ' + v + '"><b>' + m + '</b><i>' + v + '</i></button>';
+    }).join('');
+  }
+  function renderHeadings() {
+    var j = !!state.partner, p2 = j && editing === 'p2';
+    var named2 = (state.p2.name || '').trim();
+    $('whoWrap').hidden = !j;
+    $('tab1').textContent = nm(1); $('tab2').textContent = nm(2);
+    $('dot1').hidden = !j; $('dot2').hidden = !j;
+    $('dot1').className = 'pdot ' + (p2 ? 'p2' : 'p1'); $('dot2').className = 'pdot ' + (p2 ? 'p2' : 'p1');
+    $('g1t').textContent = p2 ? (named2 ? 'So arbeitet ' + named2 : 'So arbeitet dein Partner') : 'So arbeitest du';
+    $('g2t').textContent = p2 ? (named2 ? 'Tage von ' + named2 : 'Tage deines Partners') : 'Deine Tage';
+    $('g3t').textContent = j ? 'Eure Wünsche' : 'Deine Wünsche';
+    $('g4hint').textContent = j ? 'Gelten für euch beide. Tippe im Kalender auf einen Tag oder trag einen Zeitraum ein.' : 'Tippe im Kalender auf einen Tag oder trag einen Zeitraum ein.';
+    $('calTitle').textContent = j ? 'Euer Jahr 2027' : 'Dein Jahr 2027';
+    $('tripsTitle').textContent = j ? 'Eure gemeinsamen Urlaube' : 'Deine Urlaube';
+    $('antragSub').textContent = j ? 'Für jede Person ein eigener Text für die Mail an die Führungskraft' : 'Zum Einfügen in eine Mail an deine Führungskraft';
+    document.querySelectorAll('input[name=editWho]').forEach(function (r) { r.checked = r.value === editing; });
+  }
+
+  function writeForm() {
+    var pp = P();
+    $('partner').checked = !!state.partner;
+    $('name1').value = state.name1 || '';
+    $('name2').value = state.p2.name || '';
+    landSel.value = pp.land;
+    renderLokal();
+    for (var i = 0; i < 7; i++) { $('wd' + i).checked = !!pp.workdays[i]; $('wdB' + i).checked = !!(pp.workdaysB || [])[i]; }
+    $('rhythmus').checked = !!pp.rhythmus;
+    document.querySelectorAll('input[name=bParity]').forEach(function (r) { r.checked = r.value === (pp.bParity || 'gerade'); });
+    ['heiligabend', 'silvester', 'urlaub', 'rest', 'restBis', 'gleit'].forEach(function (k) { $(k).value = pp[k]; });
+    $('gleitzeit').checked = !!pp.gleitzeit;
+    ['haupt', 'maxTrips', 'abstand', 'minLen', 'maxLen'].forEach(function (k) { $(k).value = state[k]; });
+    document.querySelectorAll('input[name=ferien]').forEach(function (r) { r.checked = r.value === state.ferien; });
+    renderMonths();
+    renderHeadings();
+    toggleWraps();
+  }
+  function toggleWraps() {
+    var pp = P();
+    $('gleitWrap').hidden = !pp.gleitzeit;
+    $('restBisWrap').hidden = !(+pp.rest > 0);
+    var on = !!pp.rhythmus;
+    $('rhyWrap').hidden = !on; $('rowB').hidden = !on; $('wlA').hidden = !on;
+    $('wdSet').classList.toggle('ab', on);
+    if (on) {
+      var mondays = [], kws = [];
+      for (var i = 3; i < DAYS_IN_YEAR && mondays.length < 3; i += 7) {
+        if (weekKind(pp, isoWeek(i)) === 'B') { mondays.push(fmtShort(i)); kws.push(isoWeek(i)); }
+      }
+      var freeB = [], freeA = [];
+      for (var k = 0; k < 7; k++) {
+        if (pp.workdays[k] && !pp.workdaysB[k]) freeB.push(WT[k]);
+        if (!pp.workdays[k] && pp.workdaysB[k]) freeA.push(WT[k]);
+      }
+      var txt = 'Woche B sind 2027 die KW ' + kws.join(', ') + ' usw., also die Wochen ab ' + mondays[0] + ', ' + mondays[1] + ' und ' + mondays[2];
+      if (freeB.length) txt += ' Zusätzlich frei in Woche B: ' + freeB.join(', ') + '.';
+      if (freeA.length) txt += ' Zusätzlich frei in Woche A: ' + freeA.join(', ') + '.';
+      $('rhyHint').textContent = txt;
+    }
+    var avg = avgWorkdays(pp);
+    $('avgHint').hidden = !(avg > 0 && avg !== 5);
+    if (avg > 0 && avg !== 5) {
+      $('avgHint').textContent = 'Ø ' + fmtNum(avg) + ' Arbeitstage pro Woche. Üblich ist, den Urlaub anteilig umzurechnen: 30 Tage bei einer 5-Tage-Woche entsprechen hier ' + fmtNum(30 * avg / 5) + ' Tagen.';
+    }
+  }
+  function readForm() {
+    var pp = P();
+    state.partner = $('partner').checked;
+    state.name1 = $('name1').value.slice(0, 20);
+    state.p2.name = $('name2').value.slice(0, 20);
+    pp.land = landSel.value;
+    pp.workdaysB = pp.workdaysB || [1, 1, 1, 1, 0, 0, 0];
+    for (var i = 0; i < 7; i++) { pp.workdays[i] = $('wd' + i).checked ? 1 : 0; pp.workdaysB[i] = $('wdB' + i).checked ? 1 : 0; }
+    pp.rhythmus = $('rhythmus').checked;
+    var bp = document.querySelector('input[name=bParity]:checked'); if (bp) pp.bParity = bp.value;
+    pp.heiligabend = $('heiligabend').value;
+    pp.silvester = $('silvester').value;
+    pp.urlaub = num($('urlaub').value, 0, 60);
+    pp.rest = num($('rest').value, 0, 30);
+    pp.restBis = $('restBis').value || '2027-03-31';
+    pp.gleitzeit = $('gleitzeit').checked;
+    pp.gleit = num($('gleit').value, 0, 30);
+    pp.lokal = pp.lokal || {};
+    document.querySelectorAll('[data-lokal]').forEach(function (c) { pp.lokal[c.getAttribute('data-lokal')] = c.checked; });
+    ['haupt', 'maxTrips', 'abstand', 'minLen', 'maxLen'].forEach(function (k) { state[k] = +$(k).value; });
+    var f = document.querySelector('input[name=ferien]:checked'); if (f) state.ferien = f.value;
+    toggleWraps();
+  }
+  function resolveLokal(pp) {
+    var opts = LOKAL[pp.land] || [], l = {};
+    opts.forEach(function (o) { l[o.key] = (pp.lokal || {})[o.key] === undefined ? o.def : !!pp.lokal[o.key]; });
+    return l;
+  }
+  function cfgFromState() {
+    var c = clone(state);
+    c.lokal = resolveLokal(c);
+    c.p2.lokal = resolveLokal(c.p2);
+    return c;
+  }
+
+  /* ---------- Rechnen: erst der sichtbare Plan, dann die beiden anderen ---------- */
+  var timer = null, runId = 0;
+  function schedule() {
+    save();
+    $('results').classList.add('busy');
+    clearTimeout(timer);
+    timer = setTimeout(compute, 80);
+  }
+  function canRun(cfg) {
+    if (!(budgetHalf(cfg) > 0 && hasWorkdays(cfg))) return false;
+    if (cfg.partner && !hasWorkdays(personCfg(cfg))) return false;
+    return true;
+  }
+  function solveNow(id) {
+    if (!(id in results)) results[id] = canRun(cfgNow) ? solve(days, cfgNow, id) : null;
+    return results[id];
+  }
+  function compute() {
+    var my = ++runId;
+    var cfg = cfgFromState();
+    cfgNow = cfg;
+    days = prepareAll(cfg);
+    results = {}; tipsCache = {}; preview = null;
+    chancenList = hasWorkdays(cfg) ? chancen(days, cfg) : [];
+    giftList = hasWorkdays(cfg) ? geschenkt(days, cfg) : [];
+    solveNow(current);
+    render();
+    $('results').classList.remove('busy');
+    var rest = PLAENE.map(function (p) { return p.id; }).filter(function (id) { return id !== current; });
+    (function next() {
+      if (my !== runId || !rest.length) return;
+      setTimeout(function () {
+        if (my !== runId) return;
+        solveNow(rest.shift());
+        renderPlans();
+        next();
+      }, 0);
+    })();
+  }
+  function tipsOf(id) {
+    if (!(id in tipsCache)) tipsCache[id] = tipsFor(days, cfgNow, id, results[id]);
+    return tipsCache[id];
+  }
+
+  /* ---------- Darstellung ---------- */
+  function render() {
+    var res = solveNow(current);
+    renderHeadings();
+    renderPlans();
+    renderSummary(res);
+    renderTips(res);
+    renderLegend();
+    renderCalendar(res);
+    renderTrips(res);
+    renderChancen(res);
+    renderAntrag(res);
+    renderMarks();
+  }
+
+  function renderPlans() {
+    var base = results.ausgewogen, j = joint();
+    $('plans').innerHTML = PLAENE.map(function (p) {
+      var pending = !(p.id in results), r = results[p.id], delta = '';
+      if (r && base && p.id !== 'ausgewogen') {
+        var d = r.freeTotal - base.freeTotal;
+        if (d > 0) delta = '<span class="delta">+' + d + ' Tage mehr</span>';
+      }
+      var nTrips = r ? r.blocks.length : 0;
+      return '<button type="button" role="tab" class="plan" id="plan-' + p.id + '" data-plan="' + p.id + '" aria-selected="' + (p.id === current) + '">' +
+        '<span class="pt-main"><span class="pn">' + esc(p.name) + '</span><span class="pd">' + esc(SHORT[p.id](j)) + '</span>' + delta + '</span>' +
+        '<span class="pt-stub"><b>' + (pending ? '…' : r ? r.freeTotal : '–') + '</b><span>' + (j ? 'Tage gemeinsam' : 'Tage frei') + '<br>' + (pending ? '' : nTrips + (nTrips === 1 ? ' Urlaub' : ' Urlaube')) + '</span></span></button>';
+    }).join('');
+  }
+
+  function budgetBlock(Pp, pc, who) {
+    var B = budgetHalf(pc) || 1, j = joint();
+    function pct(h) { return (100 * h / B).toFixed(2) + '%'; }
+    var bar = '<i class="' + (who === 2 ? 'p' : 'u') + '" style="width:' + pct(Pp.urlaubUsedHalf) + '"></i>' +
+      '<i class="r" style="width:' + pct(Pp.restUsedHalf) + '"></i>' +
+      '<i class="g" style="width:' + pct(Pp.gleitUsedHalf) + '"></i>' +
+      '<i class="x" style="width:' + pct(Pp.forfeitHalf) + '"></i>';
+    var items = '<li><i class="lg ' + (who === 2 ? 'p' : 'u') + '"></i>Urlaub <b>' + fmtNum(Pp.urlaubUsedHalf / 2) + ' von ' + pc.urlaub + '</b></li>';
+    if (+pc.rest > 0) items += '<li><i class="lg r"></i>Resturlaub <b>' + fmtNum(Pp.restUsedHalf / 2) + ' von ' + pc.rest + '</b> bis ' + fmtShort(indexOfIso(pc.restBis)) + '</li>';
+    if (pc.gleitzeit && +pc.gleit > 0) items += '<li><i class="lg g"></i>Gleittage <b>' + fmtNum(Pp.gleitUsedHalf / 2) + ' von ' + pc.gleit + '</b></li>';
+    if (Pp.forfeitHalf > 0) items += '<li>verfällt <b>' + fmtNum(Pp.forfeitHalf / 2) + '</b></li>';
+    if (Pp.leftHalf > 0) items += '<li>übrig <b>' + fmtNum(Pp.leftHalf / 2) + '</b></li>';
+    return '<div class="budget">' + (j ? '<span class="who"><i class="pdot p' + who + '"></i>' + esc(nm(who)) + '</span>' : '') +
+      '<div class="bar" role="img" aria-label="' + fmtNum(Pp.usedHalf / 2) + ' von ' + fmtNum(B / 2) + ' Tagen verplant">' + bar + '</div><ul>' + items + '</ul></div>';
+  }
+
+  function renderSummary(res) {
+    var el = $('summary');
+    if (!res) {
+      el.innerHTML = '<p class="empty">Trag mindestens einen Urlaubstag und einen Arbeitstag ein, dann rechnet der Planer.</p>';
+      return;
+    }
+    var cfg = cfgNow, j = joint(), nb = res.blocks.length, txt;
+    var bigFrom = lastBig == null ? res.freeTotal : lastBig;
+    if (j) {
+      txt = '<strong>Tage gemeinsam frei</strong><p>verteilt auf ' + nb + (nb === 1 ? ' gemeinsamen Urlaub' : ' gemeinsame Urlaube') + '. ' +
+        esc((state.name1 || '').trim() || 'Du') + ' setzt dafür ' + fmtNum(res.p1.usedHalf / 2) + ' Tage ein, ' + esc((state.p2.name || '').trim() || 'dein Partner') + ' ' + fmtNum(res.p2.usedHalf / 2) + '.</p>';
+    } else {
+      var used = res.p1.usedHalf / 2, factor = used ? res.freeTotal / used : 0;
+      txt = '<strong>freie Tage am Stück</strong><p>verteilt auf ' + nb + (nb === 1 ? ' Urlaub' : ' Urlaube') + ', für ' + fmtNum(used) + ' eingesetzte Tage. Jeder Urlaubstag bringt dir im Schnitt ' + fmtNum(factor) + ' freie Tage.</p>';
+    }
+    el.innerHTML = '<div class="burst" aria-hidden="true"><i></i><b id="bigNum">' + bigFrom + '</b></div><div class="txt"><span class="sr">' + res.freeTotal + ' </span>' + txt + '</div>' +
+      budgetBlock(res.p1, cfg, 1) + (j && res.p2 ? budgetBlock(res.p2, personCfg(cfg), 2) : '');
+    countTo(bigFrom, res.freeTotal);
+  }
+  var lastBig = null, countRaf = 0;
+  function countTo(from, to) {
+    lastBig = to;
+    cancelAnimationFrame(countRaf);
+    var el = $('bigNum');
+    if (!el) return;
+    if (reduceMotion || from === to) { el.textContent = to; return; }
+    var t0 = performance.now(), dur = 520;
+    (function tick(now) {
+      var k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = Math.round(from + (to - from) * e);
+      if (k < 1) countRaf = requestAnimationFrame(tick);
+    })(t0);
+  }
+
+  function renderTips(res) {
+    var el = $('tips');
+    if (!res) { el.innerHTML = ''; return; }
+    var tips = tipsOf(current);
+    if (!tips.length) {
+      el.innerHTML = '<li class="tip k-swap"><span class="tag">Optimal</span><div class="tt">Mehr geht nicht</div><p>Kein einzelner Tausch, keine Verschiebung und kein zusätzlicher Tag bringt bei diesen Vorgaben mehr freie Tage.</p></li>';
+      return;
+    }
+    el.innerHTML = tips.map(function (t, k) {
+      return '<li class="tip k-' + t.kind + '">' +
+        '<span class="tag">' + TAG[t.kind] + '</span><div class="tt">' + esc(t.title) + '</div>' +
+        '<p>' + esc(t.text) + '</p>' + (t.note ? '<p class="note">' + esc(t.note) + '</p>' : '') +
+        (t.to ? '<button type="button" class="show" data-tip="' + k + '">Im Kalender zeigen</button>' : '') + '</li>';
+    }).join('');
+  }
+
+  function renderLegend() {
+    var j = joint(), items;
+    if (j) {
+      items = [
+        ['split', '', 'oben ' + nm(1) + ', unten ' + nm(2)],
+        ['u', '', 'Urlaub ' + nm(1)], ['p', '', 'Urlaub ' + nm(2)],
+        ['r', '', 'Resturlaub'], ['g', '', 'Gleittag'], ['s', '', 'ohnehin frei im Urlaub'],
+        ['o1', '15', 'nur ' + nm(1) + ' frei'], ['o2', '15', 'nur ' + nm(2) + ' frei'],
+        ['h', '17', 'Feiertag'], ['f', '', 'Schulferien ' + LAENDER[cfgNow.land]], ['m', '', 'muss frei sein'], ['b', '', 'gesperrt']
+      ];
+    } else {
+      items = [['u', '', 'Urlaubstag'], ['r', '', 'Resturlaub'], ['g', '', 'Gleittag'], ['s', '', 'ohnehin frei im Urlaub'], ['h', '17', 'Feiertag'], ['f', '', 'Schulferien'], ['m', '', 'muss frei sein'], ['b', '', 'gesperrt']];
+      if (cfgNow && cfgNow.rhythmus) items.push(['y', '15', 'frei im Rhythmus']);
+    }
+    $('legend').innerHTML = items.map(function (x) { return '<span><i class="lg ' + x[0] + '">' + x[1] + '</i>' + esc(x[2]) + '</span>'; }).join('');
+  }
+
+  function kindLabel(k, half) { return k === 'rest' ? 'Resturlaub' : k === 'gleit' ? 'Gleittag' : (half ? 'halber Urlaubstag' : 'Urlaubstag'); }
+  function kindCode(k, half, who) { return (k === 'rest' ? 'r' : k === 'gleit' ? 'g' : (who === 1 ? 'u' : 'p')) + (half ? 'h' : ''); }
+
+  function renderCalendar(res) {
+    var span = new Uint8Array(DAYS_IN_YEAR), j = joint();
+    var k1 = res ? res.p1.kind : {}, k2 = res && res.p2 ? res.p2.kind : {};
+    var monthFree = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    if (res) res.blocks.forEach(function (b) { for (var i = b.s; i <= b.e; i++) { span[i] = 1; monthFree[days[i].m]++; } });
+    var n1 = nm(1), n2 = nm(2), html = '';
+    for (var m = 0; m < 12; m++) {
+      var first = indexOfIso(YEAR + '-' + pad2(m + 1) + '-01');
+      var last = m === 11 ? DAYS_IN_YEAR - 1 : indexOfIso(YEAR + '-' + pad2(m + 2) + '-01') - 1;
+      html += '<div class="month" id="mon-' + m + '"><h3>' + MONATE[m] + '<small' + (monthFree[m] ? ' class="has"' : '') + '>' + (monthFree[m] ? monthFree[m] + ' frei' : '') + '</small></h3><div class="grid">';
+      html += WT.map(function (w, k) { return '<span class="wd' + (k >= 5 ? ' we' : '') + '">' + w + '</span>'; }).join('');
+      for (var lead = 0; lead < days[first].dow; lead++) html += '<span></span>';
+      for (var i = first; i <= last; i++) {
+        var d = days[i], cls = ['d'], info = [];
+        var free1 = d.cost === 0, free2 = !j || d.cost2 === 0;
+        if (d.holiday || (j && d.holiday2)) {
+          cls.push('hol');
+          if (!j || (d.holiday && d.holiday2)) info.push(d.holiday || d.holiday2);
+          else info.push((d.holiday || d.holiday2) + ' (nur ' + (d.holiday ? n1 : n2) + ')');
+        } else if (free1 && free2) cls.push('off');
+        if (d.school) { cls.push('sch'); info.push(d.school); }
+        if (span[i]) {
+          if (j) {
+            var top = k1[i] ? kindCode(k1[i], d.cost === 1, 1) : 's', bot = k2[i] ? kindCode(k2[i], d.cost2 === 1, 2) : 's';
+            cls.push('jv', 't-' + top, 'b-' + bot);
+            if (k1[i] || k2[i]) cls.push('vtxt');
+            info.push(n1 + ': ' + (k1[i] ? kindLabel(k1[i], d.cost === 1) : 'frei'));
+            info.push(n2 + ': ' + (k2[i] ? kindLabel(k2[i], d.cost2 === 1) : 'frei'));
+          } else if (k1[i]) {
+            cls.push('vac', 'k-' + k1[i]);
+            if (d.cost === 1) cls.push('half');
+            info.push(kindLabel(k1[i], d.cost === 1));
+          } else { cls.push('span'); info.push('frei im Urlaub'); }
+          if (!span[i - 1] || d.dow === 0 || i === first) cls.push('l');
+          if (!span[i + 1] || d.dow === 6 || i === last) cls.push('r');
+        } else if (j && free1 !== free2) {
+          cls.push(free1 ? 'o1' : 'o2'); info.push('frei: nur ' + (free1 ? n1 : n2));
+        } else if (!j && d.rhy && !d.holiday) { cls.push('rhy'); info.push('frei im Rhythmus'); }
+        if (d.mark === 'must') { cls.push('must'); info.push('muss frei sein'); }
+        if (d.mark === 'block') { cls.push('blk'); info.push('gesperrt'); }
+        if (d.mark === 'free') { cls.push('given'); info.push('schon frei'); }
+        if (preview && i >= preview.s && i <= preview.e) {
+          cls.push('pv');
+          if (i === preview.s || d.dow === 0 || i === first) cls.push('pl');
+          if (i === preview.e || d.dow === 6 || i === last) cls.push('pr');
+        }
+        info.push('KW ' + d.kw);
+        var label = fmtLong(i) + ' · ' + info.join(' · ');
+        html += '<button type="button" class="' + cls.join(' ') + '" data-i="' + i + '" title="' + esc(label) + '" aria-label="' + esc(label) + '">' + d.dom + '</button>';
+      }
+      html += '</div></div>';
+    }
+    $('calendar').innerHTML = html;
+  }
+
+  function countKind(Pp, key, b, k) { var h = 0; b.vac.forEach(function (i) { if (Pp.kind[i] === k) h += days[i][key]; }); return h / 2; }
+
+  function renderTrips(res) {
+    var el = $('trips'), j = joint();
+    if (!res || !res.blocks.length) { el.innerHTML = '<li><p class="empty">Noch kein Urlaub geplant.</p></li>'; $('tripsSub').textContent = ''; return; }
+    $('tripsSub').textContent = res.blocks.length + (res.blocks.length === 1 ? ' Urlaub' : ' Urlaube') + ' · ' + res.freeTotal + ' Tage';
+    el.innerHTML = res.blocks.map(function (b) {
+      var tags = [], meta;
+      b.holidays.forEach(function (h) { tags.push('<span class="tg hol">' + esc(h) + '</span>'); });
+      if (b.school) tags.push('<span class="tg">' + b.school + (b.school === 1 ? ' Tag' : ' Tage') + ' Schulferien</span>');
+      var persons = [[res.p1, 'cost', 1]];
+      if (j && res.p2) persons.push([res.p2, 'cost2', 2]);
+      persons.forEach(function (x) {
+        var rs = countKind(x[0], x[1], b, 'rest'), gl = countKind(x[0], x[1], b, 'gleit'), who = j ? ' ' + nm(x[2]) : '';
+        if (rs) tags.push('<span class="tg">' + fmtNum(rs) + ' Resturlaub' + esc(who) + '</span>');
+        if (gl) tags.push('<span class="tg">' + fmtNum(gl) + (gl === 1 ? ' Gleittag' : ' Gleittage') + esc(who) + '</span>');
+      });
+      if (j) {
+        meta = esc(nm(1)) + ' ' + fmtNum(b.c1 / 2) + ', ' + esc(nm(2)) + ' ' + fmtNum(b.c2 / 2) + ' Urlaubstage';
+      } else {
+        var cost = b.c1 / 2;
+        meta = fmtNum(cost) + (cost === 1 ? ' Urlaubstag' : ' Urlaubstage') + ' · jeder bringt ' + fmtNum(b.len / cost) + ' freie Tage';
+      }
+      return '<li><span class="len">' + b.len + '<small>Tage</small></span>' +
+        '<button type="button" class="rng" data-s="' + b.s + '" data-e="' + b.e + '">' + fmtDay(b.s) + ' – ' + fmtDay(b.e) + '</button>' +
+        '<span class="meta">' + meta + '</span><span class="tags">' + tags.join('') + '</span></li>';
+    }).join('');
+  }
+
+  function renderChancen(res) {
+    var j = joint(), el = $('chancen');
+    $('chTitle').textContent = j ? 'Beste gemeinsame Brücken' : 'Beste Brücken in ' + LAENDER[state.land];
+    var model = j ? 'euren Arbeitszeitmodellen' : 'deinem Arbeitszeitmodell';
+    var gifts = giftList.map(function (g) {
+      return '<li><span class="len">' + g.len + '<small>Tage</small></span>' +
+        '<span class="rng">Ohne Urlaubstag: ' + fmtRange(g.s, g.e) + '</span>' +
+        '<span class="meta">' + (g.hol ? esc(g.hol) + ' plus freie Tage aus ' + model : 'freie Tage aus ' + model) + '</span>' +
+        '<span class="tags"><span class="tg gift">geschenkt</span></span></li>';
+    }).join('');
+    if (!chancenList.length && !gifts) { el.innerHTML = '<li><p class="empty">Mit diesen Arbeitstagen ergeben sich 2027 keine Brückentage.</p></li>'; return; }
+    el.innerHTML = gifts + chancenList.map(function (c) {
+      var inPlan = res && res.blocks.some(function (b) { return !(b.e < c.s || b.s > c.e); });
+      var costTxt = j ? esc(nm(1)) + ' ' + fmtNum(c.cost) + ', ' + esc(nm(2)) + ' ' + fmtNum(c.cost2) + ' Urlaubstage'
+        : fmtNum(c.cost) + (c.cost === 1 ? ' Urlaubstag' : ' Urlaubstage');
+      var bigTxt = '';
+      if (c.big) bigTxt = ' · länger: ' + c.big.len + ' Tage (' + fmtRange(c.big.s, c.big.e) + ') für ' + (j ? fmtNum(c.big.cost) + ' + ' + fmtNum(c.big.cost2) : fmtNum(c.big.cost)) + ' Urlaubstage';
+      return '<li><span class="len">' + c.len + '<small>Tage</small></span>' +
+        '<span class="rng">' + fmtRange(c.s, c.e) + ' · ' + costTxt + '</span>' +
+        '<span class="meta">' + esc(c.hol) + bigTxt + '</span>' +
+        '<span class="tags">' + (inPlan ? '<span class="tg in">' + (j ? 'in eurem Plan' : 'in deinem Plan') + '</span>' : '') + '</span></li>';
+    }).join('');
+  }
+
+  function dateDE(i) { var d = dateOf(i); return WT[(d.getUTCDay() + 6) % 7] + ', ' + pad2(d.getUTCDate()) + '.' + pad2(d.getUTCMonth() + 1) + '.' + YEAR; }
+  function antragFor(res, Pp, key, title) {
+    var lines = [title, ''], k = 0, total = 0;
+    res.blocks.forEach(function (b) {
+      var mine = b.vac.filter(function (i) { return days[i][key] > 0; });
+      if (!mine.length) return;
+      k++;
+      var f = mine[0], l = mine[mine.length - 1], cost = 0, extra = [];
+      mine.forEach(function (i) { cost += days[i][key]; });
+      cost /= 2; total += cost;
+      var rs = countKind(Pp, key, b, 'rest'), gl = countKind(Pp, key, b, 'gleit');
+      if (rs) extra.push('davon ' + fmtNum(rs) + ' Resturlaub');
+      if (gl) extra.push((rs ? '' : 'davon ') + fmtNum(gl) + (gl === 1 ? ' Gleittag' : ' Gleittage'));
+      mine.forEach(function (i) { if (days[i][key] === 1) extra.push('halber Tag am ' + fmtShort(i)); });
+      lines.push(k + '. ' + (f === l ? dateDE(f) : dateDE(f) + ' bis ' + dateDE(l)) + ': ' + fmtNum(cost) + (cost === 1 ? ' Tag' : ' Tage') + (extra.length ? ' (' + extra.join(', ') + ')' : ''));
+    });
+    if (!k) lines.push('Keine Urlaubstage nötig.');
+    lines.push('', 'Gesamt: ' + fmtNum(total) + (total === 1 ? ' Tag.' : ' Tage.'));
+    return lines.join('\n');
+  }
+  function renderAntrag(res) {
+    if (!res || !res.blocks.length) { $('antrag').value = ''; return; }
+    if (joint() && res.p2) {
+      $('antrag').value = antragFor(res, res.p1, 'cost', 'Urlaubsplanung ' + YEAR + ' – ' + nm(1)) + '\n\n\n' + antragFor(res, res.p2, 'cost2', 'Urlaubsplanung ' + YEAR + ' – ' + nm(2));
+    } else {
+      $('antrag').value = antragFor(res, res.p1, 'cost', 'Urlaubsplanung ' + YEAR) + '\nDamit ' + res.freeTotal + ' freie Tage am Stück, inklusive Wochenenden und Feiertagen.';
+    }
+  }
+
+  function markRanges() {
+    var list = Object.keys(state.marks).filter(function (k) { return /^2027-\d\d-\d\d$/.test(k); }).map(function (k) { return { i: indexOfIso(k), t: state.marks[k] }; });
+    list.sort(function (a, b) { return a.i - b.i; });
+    var out = [];
+    list.forEach(function (x) {
+      var lastR = out[out.length - 1];
+      if (lastR && lastR.t === x.t && lastR.e === x.i - 1) lastR.e = x.i; else out.push({ s: x.i, e: x.i, t: x.t });
+    });
+    return out;
+  }
+  function renderMarks() {
+    var r = markRanges();
+    $('markList').innerHTML = r.length ? r.map(function (x) {
+      return '<li><span class="sw ' + x.t + '"></span><span>' + (x.s === x.e ? fmtDay(x.s) : fmtDay(x.s) + ' – ' + fmtDay(x.e)) + '</span><span class="what">' + MARK_LABEL[x.t] + '</span>' +
+        '<button type="button" data-from="' + x.s + '" data-to="' + x.e + '" aria-label="Termin entfernen">×</button></li>';
+    }).join('') : '<li><span class="hint">Noch keine festen Termine.</span></li>';
+  }
+
+  /* ---------- Ereignisse ---------- */
+  var form = $('settings');
+  function onFormChange(ev) {
+    var t = ev.target;
+    if (t.id === 'fromDate' || t.id === 'toDate' || t.id === 'markType') return;
+    if (t.name === 'editWho') { if (ev.type === 'change') { editing = t.value; writeForm(); } return; }
+    var landChanged = t.id === 'land';
+    readForm();
+    if (t.id === 'partner' && !state.partner) { editing = 'p1'; writeForm(); }
+    if (t.id === 'partner' || t.id === 'name1' || t.id === 'name2') renderHeadings();
+    if (landChanged) renderLokal();
+    if (t.id === 'rhythmus' && t.checked) {
+      var pp = P();
+      pp.workdaysB = pp.workdays.slice();
+      if (pp.workdaysB[4]) pp.workdaysB[4] = 0;
+      for (var i = 0; i < 7; i++) $('wdB' + i).checked = !!pp.workdaysB[i];
+      toggleWraps();
+    }
+    schedule();
+  }
+  form.addEventListener('change', onFormChange);
+  form.addEventListener('input', function (ev) { if (ev.target.type === 'number' || ev.target.type === 'text') onFormChange(ev); });
+  form.addEventListener('submit', function (ev) { ev.preventDefault(); });
+
+  $('months').addEventListener('click', function (ev) {
+    var b = ev.target.closest('.mbtn'); if (!b) return;
+    var m = +b.getAttribute('data-m'), v = state.monate[m] || 'egal';
+    state.monate[m] = MONTH_CYCLE[(MONTH_CYCLE.indexOf(v) + 1) % MONTH_CYCLE.length];
+    renderMonths();
+    var nb = $('mo' + m); if (nb) nb.focus();
+    schedule();
+  });
+
+  $('addRange').addEventListener('click', function () {
+    var f = $('fromDate').value, t = $('toDate').value || f, type = $('markType').value;
+    if (!f) { $('fromDate').focus(); return; }
+    var a = indexOfIso(f), b = indexOfIso(t);
+    if (b < a) { var x = a; a = b; b = x; }
+    a = Math.max(0, a); b = Math.min(DAYS_IN_YEAR - 1, b);
+    for (var i = a; i <= b; i++) state.marks[isoOf(i)] = type;
+    $('fromDate').value = ''; $('toDate').value = '';
+    schedule();
+  });
+  $('markList').addEventListener('click', function (ev) {
+    var b = ev.target.closest('button[data-from]'); if (!b) return;
+    for (var i = +b.getAttribute('data-from'); i <= +b.getAttribute('data-to'); i++) delete state.marks[isoOf(i)];
+    schedule();
+  });
+  $('reset').addEventListener('click', function () {
+    state = clone(DEFAULTS); current = 'ausgewogen'; editing = 'p1';
+    writeForm(); schedule();
+  });
+
+  $('paint').addEventListener('change', function (ev) { if (ev.target.name === 'paint') paint = ev.target.value; });
+  $('calendar').addEventListener('click', function (ev) {
+    var b = ev.target.closest('button.d'); if (!b) return;
+    var iso = isoOf(+b.getAttribute('data-i'));
+    if (state.marks[iso] === paint) delete state.marks[iso]; else state.marks[iso] = paint;
+    schedule();
+  });
+
+  function selectPlan(id) {
+    current = id; preview = null; save(); render();
+    var nb = $('plan-' + current); if (nb) nb.focus();
+  }
+  $('plans').addEventListener('click', function (ev) {
+    var b = ev.target.closest('.plan'); if (!b) return;
+    selectPlan(b.getAttribute('data-plan'));
+  });
+  $('plans').addEventListener('keydown', function (ev) {
+    if (ev.key !== 'ArrowRight' && ev.key !== 'ArrowLeft') return;
+    var ids = PLAENE.map(function (p) { return p.id; }), k = ids.indexOf(current);
+    selectPlan(ids[(k + (ev.key === 'ArrowRight' ? 1 : ids.length - 1)) % ids.length]);
+  });
+
+  function showRange(s, e) {
+    preview = { s: s, e: e };
+    renderCalendar(results[current]);
+    var mon = $('mon-' + days[s].m);
+    if (mon) mon.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+  }
+  $('tips').addEventListener('click', function (ev) {
+    var b = ev.target.closest('button.show'); if (!b) return;
+    var t = tipsOf(current)[+b.getAttribute('data-tip')];
+    if (t && t.to) showRange(t.to.s, t.to.e);
+  });
+  $('trips').addEventListener('click', function (ev) {
+    var b = ev.target.closest('button.rng'); if (!b) return;
+    showRange(+b.getAttribute('data-s'), +b.getAttribute('data-e'));
+  });
+
+  $('copy').addEventListener('click', function () {
+    var ta = $('antrag'), msg = $('copied');
+    function fallback() { ta.focus(); ta.select(); msg.textContent = 'Text markiert, jetzt mit Strg+C oder ⌘+C kopieren.'; }
+    try {
+      navigator.clipboard.writeText(ta.value).then(function () { msg.textContent = 'Kopiert.'; }, fallback);
+    } catch (e) { fallback(); }
+  });
+
+  /* Wortmarke: falls die Schrift breiter läuft als gedacht, passend verkleinern */
+  function fitWordmark() {
+    var h = document.querySelector('.wordmark'); if (!h) return;
+    h.style.fontSize = '';
+    var avail = h.clientWidth, need = h.scrollWidth;
+    if (need > avail + 1) h.style.fontSize = (parseFloat(getComputedStyle(h).fontSize) * avail / need * 0.98) + 'px';
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitWordmark);
+  window.addEventListener('resize', fitWordmark);
+  fitWordmark();
+
+  writeForm();
+  compute();
+})();
+
+</script>
+</body>
+</html>
